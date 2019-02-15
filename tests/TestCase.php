@@ -1,23 +1,33 @@
 <?php
 
-namespace Spatie\Skeleton\Tests;
+namespace Spatie\QueueableAction\Tests;
 
-use Illuminate\Support\Facades\Queue;
 use Orchestra\Testbench\TestCase as OrchestraTestCase;
-use Spatie\QueueableAction\ActionJob;
-use Spatie\QueueableAction\Tests\Extra\SimpleAction;
 
 class TestCase extends OrchestraTestCase
 {
-    /** @test */
-    public function an_action_can_be_queued()
+    const LOG_PATH = __DIR__ . '/data/queue.log';
+
+    protected function setUp()
     {
-        Queue::fake();
+        parent::setUp();
 
-        $action = new SimpleAction();
+        $this->clearLog();
+    }
 
-        $action->onQueue()->execute();
+    protected function clearLog()
+    {
+        if (! file_exists(self::LOG_PATH)) {
+            return;
+        }
 
-        Queue::assertPushed(ActionJob::class);
+        unlink(self::LOG_PATH);
+    }
+
+    protected function assertLogHas(string $text)
+    {
+        $log = file_get_contents(self::LOG_PATH);
+
+        $this->assertStringContainsString($text, $log);
     }
 }
