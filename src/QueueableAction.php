@@ -14,8 +14,7 @@ trait QueueableAction
         }
 
         /** @var self $class */
-        $class = new class($this)
-        {
+        $class = new class($this) {
             protected $action;
 
             public function __construct(object $action)
