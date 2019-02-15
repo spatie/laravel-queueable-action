@@ -10,7 +10,7 @@ Actions are a way of structuring your business logic in Laravel.
 This package adds easy support to make them queueable.
 
 ```php
-$myAction->onQueue()->execute($model, $requestData);
+$myAction->onQueue()->execute();
 ```
 
 ## Installation
