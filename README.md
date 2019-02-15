@@ -1,10 +1,10 @@
 # Queueable actions in Laravel
 
-[![Latest Version on Packagist](https://img.shields.io/packagist/v/spatie/laravel-queueable-actions.svg?style=flat-square)](https://packagist.org/packages/spatie/laravel-queueable-action)
+[![Latest Version on Packagist](https://img.shields.io/packagist/v/spatie/laravel-queueable-action.svg?style=flat-square)](https://packagist.org/packages/spatie/laravel-queueable-action)
 [![StyleCI](https://github.styleci.io/repos/170877229/shield?branch=master)](https://github.styleci.io/repos/170877229)
-[![Build Status](https://img.shields.io/travis/spatie/laravel-queueable-actions/master.svg?style=flat-square)](https://travis-ci.org/spatie/laravel-queueable-action)
-[![Quality Score](https://img.shields.io/scrutinizer/g/spatie/laravel-queueable-actions.svg?style=flat-square)](https://scrutinizer-ci.com/g/spatie/laravel-queueable-action)
-[![Total Downloads](https://img.shields.io/packagist/dt/spatie/laravel-queueable-actions.svg?style=flat-square)](https://packagist.org/packages/spatie/laravel-queueable-action)
+[![Build Status](https://img.shields.io/travis/spatie/laravel-queueable-action/master.svg?style=flat-square)](https://travis-ci.org/spatie/laravel-queueable-action)
+[![Quality Score](https://img.shields.io/scrutinizer/g/spatie/laravel-queueable-action.svg?style=flat-square)](https://scrutinizer-ci.com/g/spatie/laravel-queueable-action)
+[![Total Downloads](https://img.shields.io/packagist/dt/spatie/laravel-queueable-action.svg?style=flat-square)](https://packagist.org/packages/spatie/laravel-queueable-action)
 
 Actions are a way of structuring your business logic in Laravel. 
 This package adds easy support to make them queueable.
