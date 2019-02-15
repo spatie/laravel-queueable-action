@@ -2,8 +2,8 @@
 
 namespace Spatie\QueueableAction\Tests\TestClasses;
 
-use Spatie\QueueableAction\QueueableAction;
 use Spatie\QueueableAction\Tests\TestCase;
+use Spatie\QueueableAction\QueueableAction;
 
 class ComplexAction
 {
@@ -24,7 +24,7 @@ class ComplexAction
     {
         file_put_contents(
             TestCase::LOG_PATH,
-            $dataObject->foo . ' ' . $this->dependencyObject->bar
+            $dataObject->foo.' '.$this->dependencyObject->bar
         );
     }
 }
