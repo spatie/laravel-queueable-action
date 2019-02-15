@@ -1,0 +1,54 @@
+{
+    "name": "spatie/laravel-queueable-action",
+    "description": "Queueable action support in Laravel",
+    "keywords": [
+        "spatie",
+        "laravel-queueable-action"
+    ],
+    "homepage": "https://github.com/spatie/laravel-queueable-action",
+    "license": "MIT",
+    "authors": [
+        {
+            "name": "Brent Roose",
+            "email": "brent@spatie.be",
+            "homepage": "https://spatie.be",
+            "role": "Developer"
+        }
+    ],
+    "require": {
+        "php": "^7.2",
+        "laravel/framework": "^5.7"
+    },
+    "require-dev": {
+        "larapack/dd": "^1.0",
+        "phpunit/phpunit": "^8.0"
+    },
+    "autoload": {
+        "psr-4": {
+            "Spatie\\QueueableAction\\": "src"
+        }
+    },
+    "autoload-dev": {
+        "psr-4": {
+            "Spatie\\QueueableAction\\Tests\\": "tests"
+        }
+    },
+    "scripts": {
+        "test": "vendor/bin/phpunit",
+        "test-coverage": "vendor/bin/phpunit --coverage-html coverage"
+
+    },
+    "config": {
+        "sort-packages": true
+    },
+    "extra": {
+        "laravel": {
+            "providers": [
+                "Spatie\\Skeleton\\SkeletonServiceProvider"
+            ],
+            "aliases": {
+                "Skeleton": "Spatie\\Skeleton\\SkeletonFacade"
+            }
+        }
+    }
+}
