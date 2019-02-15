@@ -1,6 +1,6 @@
 <?php
 
-namespace Spatie\QueueableAction\Tests\Extra;
+namespace Spatie\QueueableAction\Tests\TestClasses;
 
 class DataObject
 {

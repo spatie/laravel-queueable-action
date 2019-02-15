@@ -4,9 +4,9 @@ namespace Spatie\QueueableAction\Tests;
 
 use Illuminate\Support\Facades\Queue;
 use Spatie\QueueableAction\ActionJob;
-use Spatie\QueueableAction\Tests\Extra\ComplexAction;
-use Spatie\QueueableAction\Tests\Extra\DataObject;
-use Spatie\QueueableAction\Tests\Extra\SimpleAction;
+use Spatie\QueueableAction\Tests\TestClasses\ComplexAction;
+use Spatie\QueueableAction\Tests\TestClasses\DataObject;
+use Spatie\QueueableAction\Tests\TestClasses\SimpleAction;
 
 class QueueableActionTest extends TestCase
 {
@@ -25,7 +25,7 @@ class QueueableActionTest extends TestCase
     /** @test */
     public function an_action_with_dependencies_and_input_can_be_executed_on_the_queue()
     {
-        /** @var \Spatie\QueueableAction\Tests\Extra\ComplexAction $action */
+        /** @var \Spatie\QueueableAction\Tests\TestClasses\ComplexAction $action */
         $action = app(ComplexAction::class);
 
         $action->onQueue()->execute(new DataObject('foo'));
@@ -38,7 +38,7 @@ class QueueableActionTest extends TestCase
     {
         Queue::fake();
 
-        /** @var \Spatie\QueueableAction\Tests\Extra\ComplexAction $action */
+        /** @var \Spatie\QueueableAction\Tests\TestClasses\ComplexAction $action */
         $action = app(ComplexAction::class);
 
         $action->queue = 'other';
@@ -53,7 +53,7 @@ class QueueableActionTest extends TestCase
     {
         Queue::fake();
 
-        /** @var \Spatie\QueueableAction\Tests\Extra\ComplexAction $action */
+        /** @var \Spatie\QueueableAction\Tests\TestClasses\ComplexAction $action */
         $action = app(ComplexAction::class);
 
         $action->queue = 'other';
