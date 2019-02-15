@@ -6,7 +6,7 @@ use Orchestra\Testbench\TestCase as OrchestraTestCase;
 
 class TestCase extends OrchestraTestCase
 {
-    const LOG_PATH = __DIR__ . '/temp/queue.log';
+    const LOG_PATH = __DIR__.'/temp/queue.log';
 
     protected function setUp()
     {
