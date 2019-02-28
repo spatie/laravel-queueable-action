@@ -8,7 +8,7 @@ class TestCase extends OrchestraTestCase
 {
     const LOG_PATH = __DIR__.'/temp/queue.log';
 
-    protected function setUp()
+    protected function setUp(): void
     {
         parent::setUp();
 

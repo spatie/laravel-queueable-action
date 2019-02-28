@@ -34,12 +34,11 @@
         }
     ],
     "require": {
-        "php": "^7.2",
-        "laravel/framework": "^5.7"
+        "php": "^7.1",
+        "laravel/framework": "~5.7|~5.8"
     },
     "require-dev": {
-        "orchestra/testbench": "^3.7",
-        "phpunit/phpunit": "^7.5"
+        "orchestra/testbench": "~3.7|~3.8"
     },
     "autoload": {
         "psr-4": {
