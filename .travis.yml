@@ -1,7 +1,6 @@
 language: php
 
 php:
-  - 7.1
   - 7.2
   - 7.3
 
@@ -9,9 +8,7 @@ env:
   global:
     - COMPOSER_FLAGS=""
   matrix:
-    - LARAVEL=5.7.*
     - LARAVEL=5.8.*
-    - COMPOSER_FLAGS="--prefer-lowest" LARAVEL=5.7.*
     - COMPOSER_FLAGS="--prefer-lowest" LARAVEL=5.8.*
 
 before_install:
