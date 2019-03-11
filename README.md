@@ -23,6 +23,11 @@ composer require spatie/laravel-queueable-action
 
 ## Usage
 
+If you want to know about the reasoning behind actions and their asynchronous usage, 
+you should read the dedicated blog post: [https://stitcher.io/blog/laravel-queueable-actions](https://stitcher.io/blog/laravel-queueable-actions).
+
+Here's an example of queueable actions in use:
+
 ``` php
 class MyAction
 {
