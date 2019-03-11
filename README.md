@@ -71,6 +71,11 @@ class MyController
 }
 ```
 
+### What is the difference between actions and jobs?
+
+In short: constructor injection allows for much more flexibility. 
+You can read an in-depth explanation here: [https://stitcher.io/blog/laravel-queueable-actions](https://stitcher.io/blog/laravel-queueable-actions#what's-the-difference-with-jobs?!?).
+
 ### Testing
 
 ``` bash
