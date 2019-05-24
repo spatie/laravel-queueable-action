@@ -30,6 +30,7 @@ trait QueueableAction
             {
                 if (is_string($queue)) {
                     $this->queue = $queue;
+
                     return;
                 }
 
