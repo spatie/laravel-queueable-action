@@ -49,6 +49,19 @@ class QueueableActionTest extends TestCase
     }
 
     /** @test */
+    public function an_action_can_be_executed_on_a_queue_using_the_on_queue_method()
+    {
+        Queue::fake();
+
+        /** @var \Spatie\QueueableAction\Tests\TestClasses\ComplexAction $action */
+        $action = app(ComplexAction::class);
+
+        $action->onQueue('other')->execute(new DataObject('foo'));
+
+        Queue::assertPushedOn('other', ActionJob::class);
+    }
+
+    /** @test */
     public function an_action_is_executed_immediately_if_not_queued()
     {
         Queue::fake();
@@ -60,7 +73,7 @@ class QueueableActionTest extends TestCase
 
         $action->execute(new DataObject('foo'));
 
-        Queue::assertPushedTimes(ActionJob::class, 0);
+        Queue::assertNotPushed(ActionJob::class);
 
         $this->assertLogHas('foo bar');
     }
