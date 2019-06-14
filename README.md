@@ -13,6 +13,12 @@ This package adds easy support to make them queueable.
 $myAction->onQueue()->execute();
 ```
 
+You can specify a queue name.
+
+```php
+$myAction->onQueue('my-favorite-queue')->execute();
+```
+
 ## Installation
 
 You can install the package via composer:
