@@ -7,8 +7,10 @@ use Spatie\QueueableAction\QueueableAction;
 class DummyClass
 {
     public function __construct() {
+        //
     }
 
     public function execute() {
+        //
     }
 }

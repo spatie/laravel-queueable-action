@@ -6,7 +6,6 @@ use Illuminate\Console\GeneratorCommand;
 
 class ActionMakeCommand extends GeneratorCommand
 {
-
 	protected $name = 'make:action';
 
 	protected $description = 'Create a new action class';
