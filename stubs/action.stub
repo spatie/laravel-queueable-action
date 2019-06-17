@@ -1,6 +1,7 @@
 <?php
 
 namespace DummyNamespace;
+
 use Spatie\QueueableAction\QueueableAction;
 
 class DummyClass
