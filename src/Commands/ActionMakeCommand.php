@@ -35,10 +35,9 @@ class ActionMakeCommand extends GeneratorCommand
 	 */
 	protected function getStub()
 	{
-		$stub = 'action.stub';
+        return __DIR__.'/../../stubs/action.stub';
 
-		return __DIR__ . '/'. $stub;
-	}
+    }
 
 	/**
 	 * Get the default namespace for the class.
@@ -49,6 +48,6 @@ class ActionMakeCommand extends GeneratorCommand
 	 */
 	protected function getDefaultNamespace($rootNamespace)
 	{
-		return $rootNamespace . '\Actions';
+		return $rootNamespace.'\Actions';
 	}
 }
