@@ -8,10 +8,8 @@ class DummyClass
 	use QueueableAction;
 
     public function __construct() {
-		// Constructor arguments can come from the container.
     }
 
     public function execute() {
-        // The business logic goes here, this can be executed in an async job.
     }
 }
