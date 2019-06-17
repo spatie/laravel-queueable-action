@@ -1,6 +1,6 @@
 <?php
 
-namespace Spatie\QueueableAction\Console\Tests;
+namespace Spatie\QueueableAction\Commands\Tests;
 
 use Illuminate\Support\Facades\File;
 use Spatie\QueueableAction\Tests\TestCase;

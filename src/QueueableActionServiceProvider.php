@@ -3,7 +3,7 @@
 namespace Spatie\QueueableAction;
 
 use Illuminate\Support\ServiceProvider;
-use Spatie\QueueableAction\Console\ActionMakeCommand;
+use Spatie\QueueableAction\Commands\ActionMakeCommand;
 
 class QueueableActionServiceProvider extends ServiceProvider
 {
