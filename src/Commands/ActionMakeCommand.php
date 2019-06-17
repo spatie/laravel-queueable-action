@@ -3,7 +3,6 @@
 namespace Spatie\QueueableAction\Commands;
 
 use Illuminate\Console\GeneratorCommand;
-use Symfony\Component\Console\Input\InputOption;
 
 class ActionMakeCommand extends GeneratorCommand
 {
