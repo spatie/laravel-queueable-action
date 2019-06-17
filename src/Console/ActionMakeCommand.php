@@ -1,6 +1,6 @@
 <?php
 
-namespace Spatie\QueueableAction\Commands;
+namespace Spatie\QueueableAction\Console;
 
 use Illuminate\Console\GeneratorCommand;
 

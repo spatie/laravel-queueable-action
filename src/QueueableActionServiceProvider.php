@@ -3,11 +3,11 @@
 namespace Spatie\QueueableAction;
 
 use Illuminate\Support\ServiceProvider;
-use Spatie\QueueableAction\Commands\ActionMakeCommand;
+use Spatie\QueueableAction\Console\ActionMakeCommand;
 
 class QueueableActionServiceProvider extends ServiceProvider
 {
-    public function boot()
+    public function register(): void
     {
         $this->app->bind('command.make:action', ActionMakeCommand::class);
 

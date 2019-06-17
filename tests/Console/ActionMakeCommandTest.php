@@ -3,7 +3,6 @@
 namespace Spatie\QueueableAction\Console\Tests;
 
 use Illuminate\Support\Facades\File;
-use Illuminate\Support\Facades\Artisan;
 use Spatie\QueueableAction\Tests\TestCase;
 
 class ActionMakeCommandTest extends TestCase
@@ -11,24 +10,24 @@ class ActionMakeCommandTest extends TestCase
     /** @test */
     public function it_can_create_an_action()
     {
-        $exitCode = Artisan::call('make:action', [
-            'name' => 'SimpleAction',
+        $actionName = 'RegisterAction';
+
+        $filePath = $this->app['path'].'/Actions/'.$actionName.'.php';
+
+        $pendingCommand = $this->artisan('make:action', [
+            'name' => $actionName,
         ]);
 
-        $this->assertEquals(0, $exitCode);
+        $pendingCommand->expectsOutput('Action created successfully.');
 
-        $this->assertContains('Action created successfully.', Artisan::output());
+        $this->assertFileExists($filePath);
 
-        $shouldOutputFilePath = $this->app['path'].'/Actions/SimpleAction.php';
+        $contents = File::get($filePath);
 
-        $this->assertTrue(File::exists($shouldOutputFilePath), 'File exists in default app/Actions folder');
+        $this->assertStringContainsString('namespace App\Actions;', $contents);
 
-        $contents = File::get($shouldOutputFilePath);
+        $this->assertStringContainsString('class '.$actionName, $contents);
 
-        $this->assertContains('namespace App\Actions;', $contents);
-
-        $this->assertContains('class SimpleAction', $contents);
-
-        dump(App\Actions\SimpleAction::class);
+        File::delete($filePath);
     }
 }
