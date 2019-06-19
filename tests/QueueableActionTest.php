@@ -77,4 +77,23 @@ class QueueableActionTest extends TestCase
 
         $this->assertLogHas('foo bar');
     }
+
+    /** @test */
+    public function an_action_can_be_queued_with_a_chain_of_other_actions_jobs()
+    {
+        Queue::fake();
+
+        /** @var \Spatie\QueueableAction\Tests\TestClasses\ComplexAction $action */
+        $action = app(ComplexAction::class);
+
+        $action->onQueue()
+            ->execute(new DataObject('foo'))
+            ->chain([
+                new ActionJob(SimpleAction::class),
+            ]);
+
+        Queue::assertPushedWithChain(ActionJob::class, [
+            new ActionJob(SimpleAction::class),
+        ]);
+    }
 }
