@@ -18,7 +18,7 @@ class ActionJob implements ShouldQueue
     /** @var array */
     protected $parameters;
 
-    public function __construct($action, array $parameters)
+    public function __construct($action, array $parameters = [])
     {
         $this->actionClass = is_string($action) ? $action : get_class($action);
         $this->parameters = $parameters;
