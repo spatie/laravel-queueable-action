@@ -89,11 +89,11 @@ class QueueableActionTest extends TestCase
         $action->onQueue()
             ->execute(new DataObject('foo'))
             ->chain([
-                new ActionJob(SimpleAction::class, []),
+                new ActionJob(SimpleAction::class),
             ]);
 
         Queue::assertPushedWithChain(ActionJob::class, [
-            new ActionJob(SimpleAction::class, []),
+            new ActionJob(SimpleAction::class),
         ]);
     }
 }
