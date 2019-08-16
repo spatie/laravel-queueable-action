@@ -77,6 +77,23 @@ class MyController
 }
 ```
 
+### Custom Tags
+
+If you want to change what tags show up in Horizon for your custom actions you can override the `tags()` function.
+
+``` php
+class CustomTagsAction
+{
+    use QueueableAction;
+
+    // ...
+
+    public function tags() {
+        return ['action', 'custom_tags'];
+    }
+}
+```
+
 ### What is the difference between actions and jobs?
 
 In short: constructor injection allows for much more flexibility. 
