@@ -52,6 +52,8 @@ class ActionJob implements ShouldQueue
             'chainQueue',
             'delay',
             'chained',
+            'tries',
+            'timeout',
         ];
 
         foreach ($queueableProperties as $queueableProperty) {
