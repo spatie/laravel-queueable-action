@@ -16,8 +16,8 @@ class ActionMakeCommand extends GeneratorCommand
     protected function getStub(): string
     {
         return $this->option('sync')
-            ? __DIR__ . '/stubs/action.stub'
-            : __DIR__ . '/stubs/action-queued.stub';
+            ? __DIR__.'/stubs/action.stub'
+            : __DIR__.'/stubs/action-queued.stub';
     }
 
     protected function getDefaultNamespace($rootNamespace): string

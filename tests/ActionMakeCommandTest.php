@@ -2,29 +2,29 @@
 
 namespace Spatie\QueueableAction\Tests;
 
-use Illuminate\Filesystem\Filesystem;
 use Mockery\MockInterface;
+use Illuminate\Filesystem\Filesystem;
 
 class ActionMakeCommandTest extends TestCase
 {
     /** @test */
     public function it_generates_queueable_actions(): void
     {
-        $this->expectsGeneratedClass(app_path('Actions/TestAction.php'), file_get_contents(__DIR__ . '/stubs/test-action-queued.stub'));
+        $this->expectsGeneratedClass(app_path('Actions/TestAction.php'), file_get_contents(__DIR__.'/stubs/test-action-queued.stub'));
 
         $this->artisan('make:action', [
-            'name' => 'TestAction'
+            'name' => 'TestAction',
         ])->expectsOutput('Action created successfully.')->assertExitCode(0);
     }
 
     /** @test */
     public function it_generates_synchronous_actions(): void
     {
-        $this->expectsGeneratedClass(app_path('Actions/TestAction.php'), file_get_contents(__DIR__ . '/stubs/test-action.stub'));
+        $this->expectsGeneratedClass(app_path('Actions/TestAction.php'), file_get_contents(__DIR__.'/stubs/test-action.stub'));
 
         $this->artisan('make:action', [
             'name' => 'TestAction',
-            '--sync' => true
+            '--sync' => true,
         ])->expectsOutput('Action created successfully.')->assertExitCode(0);
     }
 
