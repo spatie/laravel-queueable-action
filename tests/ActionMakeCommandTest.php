@@ -10,7 +10,7 @@ class ActionMakeCommandTest extends TestCase
     /** @test */
     public function it_generates_queueable_actions(): void
     {
-        $this->expectsGeneratedClass('TestAction', file_get_contents(__DIR__ . '/stubs/test-action-queued.stub'));
+        $this->expectsGeneratedClass(app_path('Actions/TestAction.php'), file_get_contents(__DIR__ . '/stubs/test-action-queued.stub'));
 
         $this->artisan('make:action', [
             'name' => 'TestAction'
@@ -20,7 +20,7 @@ class ActionMakeCommandTest extends TestCase
     /** @test */
     public function it_generates_synchronous_actions(): void
     {
-        $this->expectsGeneratedClass('TestAction', file_get_contents(__DIR__ . '/stubs/test-action.stub'));
+        $this->expectsGeneratedClass(app_path('Actions/TestAction.php'), file_get_contents(__DIR__ . '/stubs/test-action.stub'));
 
         $this->artisan('make:action', [
             'name' => 'TestAction',
@@ -34,7 +34,7 @@ class ActionMakeCommandTest extends TestCase
             $mock->makePartial()
                 ->expects('put')
                 ->withArgs(static function ($path, $compiled) use ($filename, $contents) {
-                    return $path === app_path("Actions/{$filename}.php")
+                    return $path === $filename
                         && $compiled === $contents;
                 })
                 ->andReturn(true);
