@@ -35,7 +35,7 @@ you should read the dedicated blog post: [https://stitcher.io/blog/laravel-queue
 You can use the following Artisan command to generate queueable and synchronous action classes on the fly.
 
 ```
-php artisan make:action MyAction [-sync]
+php artisan make:action MyAction [--sync]
 ```
 
 Here's an example of queueable actions in use:
