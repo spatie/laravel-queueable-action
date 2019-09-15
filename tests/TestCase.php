@@ -3,6 +3,7 @@
 namespace Spatie\QueueableAction\Tests;
 
 use Orchestra\Testbench\TestCase as OrchestraTestCase;
+use Spatie\QueueableAction\QueueableActionServiceProvider;
 
 class TestCase extends OrchestraTestCase
 {
@@ -13,6 +14,13 @@ class TestCase extends OrchestraTestCase
         parent::setUp();
 
         $this->clearLog();
+    }
+
+    protected function getPackageProviders($app): array
+    {
+        return [
+            QueueableActionServiceProvider::class
+        ];
     }
 
     protected function clearLog()

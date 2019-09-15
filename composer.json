@@ -57,5 +57,12 @@
     },
     "config": {
         "sort-packages": true
+    },
+    "extra": {
+        "laravel": {
+            "providers": [
+                "Spatie\\QueueableAction\\QueueableActionServiceProvider"
+            ]
+        }
     }
 }
