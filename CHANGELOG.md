@@ -2,6 +2,10 @@
 
 All notable changes to `laravel-queueable-actions` will be documented in this file
 
+## 2.3.0 - 2019-09-24
+
+- Add `make:action` command
+
 ## 2.2.0 - 2019-09-04
 
 - Add Laravel 6.0 support
