@@ -32,6 +32,12 @@ composer require spatie/laravel-queueable-action
 If you want to know about the reasoning behind actions and their asynchronous usage, 
 you should read the dedicated blog post: [https://stitcher.io/blog/laravel-queueable-actions](https://stitcher.io/blog/laravel-queueable-actions).
 
+You can use the following Artisan command to generate queueable and synchronous action classes on the fly.
+
+```
+php artisan make:action MyAction [--sync]
+```
+
 Here's an example of queueable actions in use:
 
 ``` php
