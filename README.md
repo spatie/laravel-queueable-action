@@ -83,6 +83,23 @@ class MyController
 }
 ```
 
+### Chaining actions
+
+You can chain actions by wrapping them in the `ActionJob`. Here's an example of two actions with the same arguments:
+
+```php
+$args = [$userId, $data];
+
+app(MyAction::class)
+    ->onQueue()
+    ->execute(...$args)
+    ->chain([
+        new ActionJob(AnotherAction::class, $args),
+    ]);
+```
+
+The `ActionJob` takes the action class *or* instance as the first argument followed by an array of the action's own arguments.
+
 ### What is the difference between actions and jobs?
 
 In short: constructor injection allows for much more flexibility. 
