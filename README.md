@@ -85,7 +85,9 @@ class MyController
 
 ### Chaining actions
 
-You can chain actions by wrapping them in the `ActionJob`. Here's an example of two actions with the same arguments:
+You can chain actions by wrapping them in the `ActionJob`. 
+
+Here's an example of two actions with the same arguments:
 
 ```php
 $args = [$userId, $data];
