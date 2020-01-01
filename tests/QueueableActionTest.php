@@ -8,7 +8,6 @@ use Spatie\QueueableAction\Tests\TestClasses\ComplexAction;
 use Spatie\QueueableAction\Tests\TestClasses\DataObject;
 use Spatie\QueueableAction\Tests\TestClasses\SimpleAction;
 use Spatie\QueueableAction\Tests\TestClasses\TaggedAction;
-use Spatie\QueueableAction\Tests\TestClasses\ComplexAction;
 
 class QueueableActionTest extends TestCase
 {
