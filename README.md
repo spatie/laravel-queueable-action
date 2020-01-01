@@ -2,7 +2,7 @@
 
 [![Latest Version on Packagist](https://img.shields.io/packagist/v/spatie/laravel-queueable-action.svg?style=flat-square)](https://packagist.org/packages/spatie/laravel-queueable-action)
 [![StyleCI](https://github.styleci.io/repos/170877229/shield?branch=master)](https://github.styleci.io/repos/170877229)
-[![Build Status](https://img.shields.io/travis/spatie/laravel-queueable-action/master.svg?style=flat-square)](https://travis-ci.org/spatie/laravel-queueable-action)
+![GitHub Workflow Status](https://img.shields.io/github/workflow/status/spatie/laravel-queuable-action/run-tests?label=tests)
 [![Quality Score](https://img.shields.io/scrutinizer/g/spatie/laravel-queueable-action.svg?style=flat-square)](https://scrutinizer-ci.com/g/spatie/laravel-queueable-action)
 [![Total Downloads](https://img.shields.io/packagist/dt/spatie/laravel-queueable-action.svg?style=flat-square)](https://packagist.org/packages/spatie/laravel-queueable-action)
 
