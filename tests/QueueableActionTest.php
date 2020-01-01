@@ -7,6 +7,8 @@ use Spatie\QueueableAction\ActionJob;
 use Spatie\QueueableAction\Tests\TestClasses\ComplexAction;
 use Spatie\QueueableAction\Tests\TestClasses\DataObject;
 use Spatie\QueueableAction\Tests\TestClasses\SimpleAction;
+use Spatie\QueueableAction\Tests\TestClasses\TaggedAction;
+use Spatie\QueueableAction\Tests\TestClasses\ComplexAction;
 
 class QueueableActionTest extends TestCase
 {
@@ -95,5 +97,33 @@ class QueueableActionTest extends TestCase
         Queue::assertPushedWithChain(ActionJob::class, [
             new ActionJob(SimpleAction::class),
         ]);
+    }
+
+    /** @test */
+    public function an_action_has_default_action_job_tag()
+    {
+        Queue::fake();
+
+        $action = new SimpleAction();
+
+        $action->onQueue()->execute();
+
+        Queue::assertPushed(ActionJob::class, function ($action) {
+            return $action->tags() === ['action_job'];
+        });
+    }
+
+    /** @test */
+    public function an_action_can_have_custom_job_tags()
+    {
+        Queue::fake();
+
+        $action = new TaggedAction();
+
+        $action->onQueue()->execute();
+
+        Queue::assertPushed(ActionJob::class, function ($action) {
+            return $action->tags() === ['custom_tag', 'tagged_action'];
+        });
     }
 }
