@@ -2,8 +2,8 @@
 
 namespace Spatie\QueueableAction\Tests;
 
-use Mockery\MockInterface;
 use Illuminate\Filesystem\Filesystem;
+use Mockery\MockInterface;
 
 class ActionMakeCommandTest extends TestCase
 {
