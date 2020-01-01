@@ -3,10 +3,10 @@
 namespace Spatie\QueueableAction;
 
 use Illuminate\Bus\Queueable;
-use Illuminate\Queue\SerializesModels;
-use Illuminate\Queue\InteractsWithQueue;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Foundation\Bus\Dispatchable;
+use Illuminate\Queue\InteractsWithQueue;
+use Illuminate\Queue\SerializesModels;
 
 class ActionJob implements ShouldQueue
 {
@@ -59,10 +59,14 @@ class ActionJob implements ShouldQueue
             'chainQueue',
             'delay',
             'chained',
+            'tries',
+            'timeout',
         ];
 
         foreach ($queueableProperties as $queueableProperty) {
-            $this->{$queueableProperty} = $action->{$queueableProperty} ?? $this->{$queueableProperty};
+            if (property_exists($action, $queueableProperty)) {
+                $this->{$queueableProperty} = $action->{$queueableProperty};
+            }
         }
     }
 }

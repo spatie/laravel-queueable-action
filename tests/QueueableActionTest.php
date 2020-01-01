@@ -4,6 +4,7 @@ namespace Spatie\QueueableAction\Tests;
 
 use Illuminate\Support\Facades\Queue;
 use Spatie\QueueableAction\ActionJob;
+use Spatie\QueueableAction\Tests\TestClasses\ComplexAction;
 use Spatie\QueueableAction\Tests\TestClasses\DataObject;
 use Spatie\QueueableAction\Tests\TestClasses\SimpleAction;
 use Spatie\QueueableAction\Tests\TestClasses\TaggedAction;

@@ -35,10 +35,12 @@
     ],
     "require": {
         "php": "^7.2",
-        "laravel/framework": "~5.8"
+        "laravel/framework": "^6.0"
     },
     "require-dev": {
-        "orchestra/testbench": "~3.8"
+        "orchestra/testbench": "^4.0",
+        "phpunit/phpunit": "^8.4",
+        "mockery/mockery": "^1.2"
     },
     "autoload": {
         "psr-4": {
@@ -57,5 +59,12 @@
     },
     "config": {
         "sort-packages": true
+    },
+    "extra": {
+        "laravel": {
+            "providers": [
+                "Spatie\\QueueableAction\\QueueableActionServiceProvider"
+            ]
+        }
     }
 }
