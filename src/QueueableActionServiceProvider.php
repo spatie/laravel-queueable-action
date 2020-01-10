@@ -2,9 +2,10 @@
 
 namespace Spatie\QueueableAction;
 
+use Illuminate\Contracts\Support\DeferrableProvider;
 use Illuminate\Support\ServiceProvider;
 
-class QueueableActionServiceProvider extends ServiceProvider
+class QueueableActionServiceProvider extends ServiceProvider implements DeferrableProvider
 {
     public function register(): void
     {

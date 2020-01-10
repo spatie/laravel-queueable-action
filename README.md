@@ -2,7 +2,7 @@
 
 [![Latest Version on Packagist](https://img.shields.io/packagist/v/spatie/laravel-queueable-action.svg?style=flat-square)](https://packagist.org/packages/spatie/laravel-queueable-action)
 [![StyleCI](https://github.styleci.io/repos/170877229/shield?branch=master)](https://github.styleci.io/repos/170877229)
-[![Build Status](https://img.shields.io/travis/spatie/laravel-queueable-action/master.svg?style=flat-square)](https://travis-ci.org/spatie/laravel-queueable-action)
+![GitHub Workflow Status](https://img.shields.io/github/workflow/status/spatie/laravel-queueable-action/run-tests?label=tests)
 [![Quality Score](https://img.shields.io/scrutinizer/g/spatie/laravel-queueable-action.svg?style=flat-square)](https://scrutinizer-ci.com/g/spatie/laravel-queueable-action)
 [![Total Downloads](https://img.shields.io/packagist/dt/spatie/laravel-queueable-action.svg?style=flat-square)](https://packagist.org/packages/spatie/laravel-queueable-action)
 
@@ -90,6 +90,8 @@ You can chain actions by wrapping them in the `ActionJob`.
 Here's an example of two actions with the same arguments:
 
 ```php
+use Spatie\QueueableAction\ActionJob;
+
 $args = [$userId, $data];
 
 app(MyAction::class)
@@ -101,6 +103,23 @@ app(MyAction::class)
 ```
 
 The `ActionJob` takes the action class *or* instance as the first argument followed by an array of the action's own arguments.
+
+### Custom Tags
+
+If you want to change what tags show up in Horizon for your custom actions you can override the `tags()` function.
+
+``` php
+class CustomTagsAction
+{
+    use QueueableAction;
+
+    // ...
+
+    public function tags() {
+        return ['action', 'custom_tags'];
+    }
+}
+```
 
 ### What is the difference between actions and jobs?
 

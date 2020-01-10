@@ -42,4 +42,9 @@ trait QueueableAction
 
         return $class;
     }
+
+    public function tags(): array
+    {
+        return ['action_job'];
+    }
 }

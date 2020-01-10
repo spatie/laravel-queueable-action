@@ -3,10 +3,10 @@
 namespace Spatie\QueueableAction;
 
 use Illuminate\Bus\Queueable;
-use Illuminate\Queue\SerializesModels;
-use Illuminate\Queue\InteractsWithQueue;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Foundation\Bus\Dispatchable;
+use Illuminate\Queue\InteractsWithQueue;
+use Illuminate\Queue\SerializesModels;
 
 class ActionJob implements ShouldQueue
 {
@@ -18,10 +18,17 @@ class ActionJob implements ShouldQueue
     /** @var array */
     protected $parameters;
 
+    /** @var array */
+    protected $tags = ['action_job'];
+
     public function __construct($action, array $parameters = [])
     {
         $this->actionClass = is_string($action) ? $action : get_class($action);
         $this->parameters = $parameters;
+
+        if (is_object($action)) {
+            $this->tags = $action->tags();
+        }
 
         $this->resolveQueueableProperties($action);
     }
@@ -33,7 +40,7 @@ class ActionJob implements ShouldQueue
 
     public function tags()
     {
-        return ['action_job'];
+        return $this->tags;
     }
 
     public function handle()
