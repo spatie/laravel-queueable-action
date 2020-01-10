@@ -83,6 +83,27 @@ class MyController
 }
 ```
 
+### Chaining actions
+
+You can chain actions by wrapping them in the `ActionJob`. 
+
+Here's an example of two actions with the same arguments:
+
+```php
+use Spatie\QueueableAction\ActionJob;
+
+$args = [$userId, $data];
+
+app(MyAction::class)
+    ->onQueue()
+    ->execute(...$args)
+    ->chain([
+        new ActionJob(AnotherAction::class, $args),
+    ]);
+```
+
+The `ActionJob` takes the action class *or* instance as the first argument followed by an array of the action's own arguments.
+
 ### Custom Tags
 
 If you want to change what tags show up in Horizon for your custom actions you can override the `tags()` function.
