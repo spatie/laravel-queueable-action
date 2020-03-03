@@ -2,6 +2,10 @@
 
 All notable changes to `laravel-queueable-actions` will be documented in this file
 
+## 2.5.0 - 2020-03-03
+
+- Add Laravel 7.0 support
+
 ## 2.4.0 - 2020-01-01
 
 - Allow custom tags to be set
