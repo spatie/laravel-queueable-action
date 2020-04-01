@@ -137,6 +137,9 @@ class QueueableActionTest extends TestCase
         Queue::fake();
 
         $action = new MiddlewareAction();
+
+        $action->onQueue()->execute();
+
         Queue::assertPushed(ActionJob::class, function ($action) {
             return is_array($action->middleware())
                 && count($action->middleware()) === 1
