@@ -28,6 +28,7 @@ class ActionJob implements ShouldQueue
 
         if (is_object($action)) {
             $this->tags = $action->tags();
+            $this->middleware = $action->middleware();
         }
 
         $this->resolveQueueableProperties($action);
@@ -41,6 +42,11 @@ class ActionJob implements ShouldQueue
     public function tags()
     {
         return $this->tags;
+    }
+
+    public function middleware()
+    {
+        return $this->middleware;
     }
 
     public function handle()

@@ -5,7 +5,9 @@ namespace Spatie\QueueableAction\Tests;
 use Illuminate\Support\Facades\Queue;
 use Spatie\QueueableAction\ActionJob;
 use Spatie\QueueableAction\Tests\TestClasses\ComplexAction;
+use Spatie\QueueableAction\Tests\TestClasses\ContinueMiddleware;
 use Spatie\QueueableAction\Tests\TestClasses\DataObject;
+use Spatie\QueueableAction\Tests\TestClasses\MiddlewareAction;
 use Spatie\QueueableAction\Tests\TestClasses\SimpleAction;
 use Spatie\QueueableAction\Tests\TestClasses\TaggedAction;
 
@@ -123,6 +125,22 @@ class QueueableActionTest extends TestCase
 
         Queue::assertPushed(ActionJob::class, function ($action) {
             return $action->tags() === ['custom_tag', 'tagged_action'];
+        });
+    }
+
+    /** @test */
+    public function an_action_can_have_job_middleware()
+    {
+        Queue::fake();
+
+        $action = new MiddlewareAction();
+
+        $action->onQueue()->execute();
+
+        Queue::assertPushed(ActionJob::class, function ($action) {
+            return is_array($action->middleware())
+                && count($action->middleware()) === 1
+                && $action->middleware[0] instanceof ContinueMiddleware;
         });
     }
 }

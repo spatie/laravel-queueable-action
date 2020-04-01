@@ -127,6 +127,23 @@ class CustomTagsAction
 }
 ```
 
+### Job Middleware
+
+Middleware where action job passes through can be added by overriding the `middleware()` function.
+
+``` php
+class CustomTagsAction
+{
+    use QueueableAction;
+
+    // ...
+
+    public function middleware() {
+        return [new RateLimited()];
+    }
+}
+```
+
 ### What is the difference between actions and jobs?
 
 In short: constructor injection allows for much more flexibility. 
