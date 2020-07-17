@@ -8,6 +8,7 @@ use Spatie\QueueableAction\ActionJob;
 use Spatie\QueueableAction\Tests\TestClasses\ActionWithFailedMethod;
 use Spatie\QueueableAction\Tests\TestClasses\ComplexAction;
 use Spatie\QueueableAction\Tests\TestClasses\DataObject;
+use Spatie\QueueableAction\Tests\TestClasses\FailingAction;
 use Spatie\QueueableAction\Tests\TestClasses\SimpleAction;
 use Spatie\QueueableAction\Tests\TestClasses\TaggedAction;
 
@@ -140,5 +141,21 @@ class QueueableActionTest extends TestCase
         Queue::assertPushed(ActionJob::class, function ($action) {
             return $action->failed(new Exception('foo')) === 'foo';
         });
+    }
+
+    /** @test */
+    public function the_failed_callback_is_executed_on_failure()
+    {
+        $action = new FailingAction();
+
+        try {
+            $action->onQueue()->execute();
+        } catch (Exception $e) {
+            //
+        }
+
+        $this->assertSame('foobar', $_SERVER['_test_failed_message']);
+        
+        unset($_SERVER['_test_failed_message']); // cleanup
     }
 }
