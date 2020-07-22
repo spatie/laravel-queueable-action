@@ -2,10 +2,13 @@
 
 namespace Spatie\QueueableAction\Tests;
 
+use Exception;
 use Illuminate\Support\Facades\Queue;
 use Spatie\QueueableAction\ActionJob;
+use Spatie\QueueableAction\Tests\TestClasses\ActionWithFailedMethod;
 use Spatie\QueueableAction\Tests\TestClasses\ComplexAction;
 use Spatie\QueueableAction\Tests\TestClasses\DataObject;
+use Spatie\QueueableAction\Tests\TestClasses\FailingAction;
 use Spatie\QueueableAction\Tests\TestClasses\SimpleAction;
 use Spatie\QueueableAction\Tests\TestClasses\TaggedAction;
 
@@ -124,5 +127,35 @@ class QueueableActionTest extends TestCase
         Queue::assertPushed(ActionJob::class, function ($action) {
             return $action->tags() === ['custom_tag', 'tagged_action'];
         });
+    }
+
+    /** @test */
+    public function an_action_can_have_a_custom_failed_callback()
+    {
+        Queue::fake();
+
+        $action = new ActionWithFailedMethod();
+
+        $action->onQueue()->execute();
+
+        Queue::assertPushed(ActionJob::class, function ($action) {
+            return $action->failed(new Exception('foo')) === 'foo';
+        });
+    }
+
+    /** @test */
+    public function the_failed_callback_is_executed_on_failure()
+    {
+        $action = new FailingAction();
+
+        try {
+            $action->onQueue()->execute();
+        } catch (Exception $e) {
+            //
+        }
+
+        $this->assertSame('foobar', $_SERVER['_test_failed_message']);
+        
+        unset($_SERVER['_test_failed_message']); // cleanup
     }
 }
