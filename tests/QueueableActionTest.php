@@ -155,7 +155,7 @@ class QueueableActionTest extends TestCase
         }
 
         $this->assertSame('foobar', $_SERVER['_test_failed_message']);
-        
+
         unset($_SERVER['_test_failed_message']); // cleanup
     }
 }
