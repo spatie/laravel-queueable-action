@@ -2,6 +2,10 @@
 
 All notable changes to `laravel-queueable-actions` will be documented in this file
 
+## 2.6.1 - 2020-09-09
+
+- Add support for Laravel 8
+
 ## 2.6.0 - 2020-07-22
 
 - Add `failed` support (#29)
