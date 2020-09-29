@@ -47,7 +47,7 @@ class QueueableActionFake
             ->map(function (array $queuedJob) {
                 return $queuedJob['job']->displayName();
             })
-            ->filter(function(string $displayName) use ($actionJobClass) {
+            ->filter(function (string $displayName) use ($actionJobClass) {
                 return $displayName === $actionJobClass;
             })
             ->count();
