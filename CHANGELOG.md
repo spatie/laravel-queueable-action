@@ -2,6 +2,10 @@
 
 All notable changes to `laravel-queueable-actions` will be documented in this file
 
+## 2.7.1 - 2020-09-29
+
+- Add `Spatie\QueueableAction\Testing\QueueableAction` class with test helpers (#27)
+
 ## 2.6.1 - 2020-09-09
 
 - Add support for Laravel 8
