@@ -92,6 +92,35 @@ class MyController
 }
 ```
 
+### Testing queued actions
+
+The package provides some test assertions in the `Spatie\QueueableAction\Testing\QueueableActionFake` class. You can use them in a PhpUnit test like this:
+
+```php
+
+/** @test */
+public function it_queues_an_action()
+{
+    Queue::fake();
+    
+    (new DoSomethingAction)->onQueue()->execute();
+
+    QueueableActionFake::assertPushed(DoSomethingAction::class);
+}
+```
+
+Don't forget to use `Queue::fake()` to mock Laravel's queues before using the `QueueableActionFake` assertions.
+
+The following assertions are available:
+
+```php
+QueueableActionFake::assertPushed(string $actionClass);
+QueueableActionFake::assertPushedTimes(string $actionClass, int $times = 1);
+QueueableActionFake::assertNotPushed(string $actionClass);
+```
+
+Feel free to send a PR if you feel any of the other `QueueFake` assertions are missing.
+
 ### Chaining actions
 
 You can chain actions by wrapping them in the `ActionJob`. 
@@ -135,7 +164,7 @@ class CustomTagsAction
 In short: constructor injection allows for much more flexibility. 
 You can read an in-depth explanation here: [https://stitcher.io/blog/laravel-queueable-actions](https://stitcher.io/blog/laravel-queueable-actions#what's-the-difference-with-jobs?!?).
 
-### Testing
+### Testing the package
 
 ``` bash
 composer test
