@@ -9,8 +9,8 @@ use Spatie\QueueableAction\Tests\TestClasses\ActionWithFailedMethod;
 use Spatie\QueueableAction\Tests\TestClasses\ComplexAction;
 use Spatie\QueueableAction\Tests\TestClasses\ContinueMiddleware;
 use Spatie\QueueableAction\Tests\TestClasses\DataObject;
-use Spatie\QueueableAction\Tests\TestClasses\MiddlewareAction;
 use Spatie\QueueableAction\Tests\TestClasses\FailingAction;
+use Spatie\QueueableAction\Tests\TestClasses\MiddlewareAction;
 use Spatie\QueueableAction\Tests\TestClasses\SimpleAction;
 use Spatie\QueueableAction\Tests\TestClasses\TaggedAction;
 
