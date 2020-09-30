@@ -2,6 +2,7 @@
 
 namespace Spatie\QueueableAction;
 
+use Exception;
 use Illuminate\Bus\Queueable;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Foundation\Bus\Dispatchable;
@@ -21,6 +22,9 @@ class ActionJob implements ShouldQueue
     /** @var array */
     protected $tags = ['action_job'];
 
+    /** @var callable */
+    protected $onFailCallback;
+
     public function __construct($action, array $parameters = [])
     {
         $this->actionClass = is_string($action) ? $action : get_class($action);
@@ -28,7 +32,12 @@ class ActionJob implements ShouldQueue
 
         if (is_object($action)) {
             $this->tags = $action->tags();
+
             $this->middleware = $action->middleware();
+
+            if (method_exists($action, 'failed')) {
+                $this->onFailCallback = [$action, 'failed'];
+            }
         }
 
         $this->resolveQueueableProperties($action);
@@ -44,9 +53,17 @@ class ActionJob implements ShouldQueue
         return $this->tags;
     }
 
+
     public function middleware()
     {
         return $this->middleware;
+    }
+
+    public function failed(Exception $exception)
+    {
+        if ($this->onFailCallback) {
+            return ($this->onFailCallback)($exception);
+        }
     }
 
     public function handle()

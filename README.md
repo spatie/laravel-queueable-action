@@ -1,9 +1,8 @@
 # Queueable actions in Laravel
 
 [![Latest Version on Packagist](https://img.shields.io/packagist/v/spatie/laravel-queueable-action.svg?style=flat-square)](https://packagist.org/packages/spatie/laravel-queueable-action)
-[![StyleCI](https://github.styleci.io/repos/170877229/shield?branch=master)](https://github.styleci.io/repos/170877229)
 ![GitHub Workflow Status](https://img.shields.io/github/workflow/status/spatie/laravel-queueable-action/run-tests?label=tests)
-[![Quality Score](https://img.shields.io/scrutinizer/g/spatie/laravel-queueable-action.svg?style=flat-square)](https://scrutinizer-ci.com/g/spatie/laravel-queueable-action)
+![Check & fix styling](https://github.com/spatie/laravel-queueable-action/workflows/Check%20&%20fix%20styling/badge.svg)
 [![Total Downloads](https://img.shields.io/packagist/dt/spatie/laravel-queueable-action.svg?style=flat-square)](https://packagist.org/packages/spatie/laravel-queueable-action)
 
 Actions are a way of structuring your business logic in Laravel. 
@@ -21,7 +20,11 @@ $myAction->onQueue('my-favorite-queue')->execute();
 
 ## Support us
 
-We invest a lot of resources into creating [best in class open source packages](https://spatie.be/open-source). You can support us by [buying one of our paid products](https://spatie.be/open-source/support-us). 
+Learn how to create a package like this one, by watching our premium video course:
+
+[![Laravel Package training](https://spatie.be/github/package-training.jpg)](https://laravelpackage.training)
+
+We invest a lot of resources into creating [best in class open source packages](https://spatie.be/open-source). You can support us by [buying one of our paid products](https://spatie.be/open-source/support-us).
 
 We highly appreciate you sending us a postcard from your hometown, mentioning which of our package(s) you are using. You'll find our address on [our contact page](https://spatie.be/about-us). We publish all received postcards on [our virtual postcard wall](https://spatie.be/open-source/postcards).
 
@@ -89,6 +92,35 @@ class MyController
 }
 ```
 
+### Testing queued actions
+
+The package provides some test assertions in the `Spatie\QueueableAction\Testing\QueueableActionFake` class. You can use them in a PhpUnit test like this:
+
+```php
+
+/** @test */
+public function it_queues_an_action()
+{
+    Queue::fake();
+    
+    (new DoSomethingAction)->onQueue()->execute();
+
+    QueueableActionFake::assertPushed(DoSomethingAction::class);
+}
+```
+
+Don't forget to use `Queue::fake()` to mock Laravel's queues before using the `QueueableActionFake` assertions.
+
+The following assertions are available:
+
+```php
+QueueableActionFake::assertPushed(string $actionClass);
+QueueableActionFake::assertPushedTimes(string $actionClass, int $times = 1);
+QueueableActionFake::assertNotPushed(string $actionClass);
+```
+
+Feel free to send a PR if you feel any of the other `QueueFake` assertions are missing.
+
 ### Chaining actions
 
 You can chain actions by wrapping them in the `ActionJob`. 
@@ -149,7 +181,7 @@ class CustomTagsAction
 In short: constructor injection allows for much more flexibility. 
 You can read an in-depth explanation here: [https://stitcher.io/blog/laravel-queueable-actions](https://stitcher.io/blog/laravel-queueable-actions#what's-the-difference-with-jobs?!?).
 
-### Testing
+### Testing the package
 
 ``` bash
 composer test
