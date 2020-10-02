@@ -64,7 +64,7 @@ class ActionJob implements ShouldQueue
         if ($this->onFailCallback) {
             return ($this->onFailCallback)($exception);
         }
-   }
+    }
 
     public function handle()
     {
