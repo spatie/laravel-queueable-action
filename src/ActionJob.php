@@ -32,6 +32,9 @@ class ActionJob implements ShouldQueue
 
         if (is_object($action)) {
             $this->tags = $action->tags();
+            $this->middleware = $action->middleware();
+
+            $this->middleware = $action->middleware();
 
             if (method_exists($action, 'failed')) {
                 $this->onFailCallback = [$action, 'failed'];
@@ -49,6 +52,11 @@ class ActionJob implements ShouldQueue
     public function tags()
     {
         return $this->tags;
+    }
+
+    public function middleware()
+    {
+        return $this->middleware;
     }
 
     public function failed(Exception $exception)

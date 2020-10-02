@@ -12,6 +12,7 @@ trait QueueableAction
         /** @var self $class */
         $class = new class($this, $queue) {
             protected $action;
+
             protected $queue;
 
             public function __construct(object $action, ?string $queue)
@@ -46,5 +47,10 @@ trait QueueableAction
     public function tags(): array
     {
         return ['action_job'];
+    }
+
+    public function middleware(): array
+    {
+        return [];
     }
 }

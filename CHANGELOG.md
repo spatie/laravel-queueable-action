@@ -2,6 +2,10 @@
 
 All notable changes to `laravel-queueable-actions` will be documented in this file
 
+## 2.7.1 - 2020-10-02
+
+- Add support for job middleware
+
 ## 2.7.0 - 2020-09-29
 
 - Add `Spatie\QueueableAction\Testing\QueueableActionFake` class with test helpers (#27)
