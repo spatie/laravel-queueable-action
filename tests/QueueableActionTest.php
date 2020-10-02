@@ -131,22 +131,6 @@ class QueueableActionTest extends TestCase
         });
     }
 
-    /** @test */
-    public function an_action_can_have_job_middleware()
-    {
-        Queue::fake();
-
-        $action = new MiddlewareAction();
-
-        $action->onQueue()->execute();
-
-        Queue::assertPushed(ActionJob::class, function ($action) {
-            return is_array($action->middleware())
-                && count($action->middleware()) === 1
-                && $action->middleware[0] instanceof ContinueMiddleware;
-        });
-    }
-
     public function an_action_can_have_a_custom_failed_callback()
     {
         Queue::fake();
@@ -175,5 +159,21 @@ class QueueableActionTest extends TestCase
         $this->assertSame('foobar', $_SERVER['_test_failed_message']);
 
         unset($_SERVER['_test_failed_message']); // cleanup
+    }
+
+    /** @test */
+    public function an_action_can_have_job_middleware()
+    {
+        Queue::fake();
+
+        $action = new MiddlewareAction();
+
+        $action->onQueue()->execute();
+
+        Queue::assertPushed(ActionJob::class, function ($action) {
+            return is_array($action->middleware())
+                && count($action->middleware()) === 1
+                && $action->middleware[0] instanceof ContinueMiddleware;
+        });
     }
 }
