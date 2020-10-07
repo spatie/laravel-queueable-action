@@ -10,6 +10,7 @@ use Spatie\QueueableAction\Tests\TestClasses\ComplexAction;
 use Spatie\QueueableAction\Tests\TestClasses\ContinueMiddleware;
 use Spatie\QueueableAction\Tests\TestClasses\DataObject;
 use Spatie\QueueableAction\Tests\TestClasses\FailingAction;
+use Spatie\QueueableAction\Tests\TestClasses\InvokeableAction;
 use Spatie\QueueableAction\Tests\TestClasses\MiddlewareAction;
 use Spatie\QueueableAction\Tests\TestClasses\SimpleAction;
 use Spatie\QueueableAction\Tests\TestClasses\TaggedAction;
@@ -101,6 +102,18 @@ class QueueableActionTest extends TestCase
         Queue::assertPushedWithChain(ActionJob::class, [
             new ActionJob(SimpleAction::class),
         ]);
+    }
+
+    /** @test */
+    public function an_action_with_the_invoke_method_can_be_executed_on_a_queue()
+    {
+        /** @var \Spatie\QueueableAction\Tests\TestClasses\InvokeableAction $action */
+        $action = app(InvokeableAction::class);
+
+        $value = random_int(0, 10000);
+        $action->onQueue()->execute(new DataObject($value));
+
+        $this->assertLogHas('Invoked: '.$value.' bar');
     }
 
     /** @test */

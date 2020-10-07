@@ -20,9 +20,7 @@ $myAction->onQueue('my-favorite-queue')->execute();
 
 ## Support us
 
-Learn how to create a package like this one, by watching our premium video course:
-
-[![Laravel Package training](https://spatie.be/github/package-training.jpg)](https://laravelpackage.training)
+[<img src="https://github-ads.s3.eu-central-1.amazonaws.com/laravel-queueable-action.jpg?t=1" width="419px" />](https://spatie.be/github-ad-click/laravel-queueable-action)
 
 We invest a lot of resources into creating [best in class open source packages](https://spatie.be/open-source). You can support us by [buying one of our paid products](https://spatie.be/open-source/support-us).
 
@@ -90,6 +88,28 @@ class MyController
         $action->execute($model, $requestData);
     }
 }
+```
+
+The ```QueueableAction``` trait assumes you are using the ```execute()``` method on your actions. However, if you are using the ```__invoke()``` method instead, then you should use the ```QueueableInvokeableAction``` trait. Here is an example:
+
+``` php
+class MyInvokeableAction
+{
+    use QueueableInvokeableAction;
+
+    public function __invoke(
+        MyModel $model,
+        RequestData $requestData
+    ) {
+        // The business logic goes here, this can be executed in an async job.
+    }
+}
+```
+
+It is important to note that the invokable actions should be added to the queue the same way as the previous examples, by running the ```execute()``` method after the ```onQueue()``` method.
+
+```php
+$action->onQueue()->execute($model, $requestData);
 ```
 
 ### Testing queued actions
