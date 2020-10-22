@@ -90,6 +90,28 @@ class MyController
 }
 ```
 
+The package also supports actions using the `__invoke()` method. This will be detected automatically. Here is an example:
+
+``` php
+class MyInvokeableAction
+{
+    use QueueableAction;
+
+    public function __invoke(
+        MyModel $model,
+        RequestData $requestData
+    ) {
+        // The business logic goes here, this can be executed in an async job.
+    }
+}
+```
+
+The actions using the `__invoke()` method should be added to the queue the same way as explained in the examples above, by running the `execute()` method after the `onQueue()` method.
+
+```php
+$myInvokeableAction->onQueue()->execute($model, $requestData);
+```
+
 ### Testing queued actions
 
 The package provides some test assertions in the `Spatie\QueueableAction\Testing\QueueableActionFake` class. You can use them in a PhpUnit test like this:
