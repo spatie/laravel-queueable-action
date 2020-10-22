@@ -2,6 +2,10 @@
 
 All notable changes to `laravel-queueable-actions` will be documented in this file
 
+## 2.8.0 - 2020-10-22
+
+- Add support for invokeable actions (#36)
+
 ## 2.7.1 - 2020-10-02
 
 - Add support for job middleware
