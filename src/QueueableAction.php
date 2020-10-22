@@ -53,4 +53,13 @@ trait QueueableAction
     {
         return [];
     }
+
+    public function queueMethod(): string
+    {
+        if (method_exists($this, '__invoke')) {
+            return '__invoke';
+        }
+
+        return 'execute';
+    }
 }

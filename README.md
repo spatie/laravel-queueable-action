@@ -90,12 +90,12 @@ class MyController
 }
 ```
 
-The ```QueueableAction``` trait assumes you are using the ```execute()``` method on your actions. However, if you are using the ```__invoke()``` method instead, then you should use the ```QueueableInvokeableAction``` trait. Here is an example:
+The package also supports actions using the `__invoke()` method. This will be detected automatically. Here is an example:
 
 ``` php
 class MyInvokeableAction
 {
-    use QueueableInvokeableAction;
+    use QueueableAction;
 
     public function __invoke(
         MyModel $model,
@@ -106,10 +106,10 @@ class MyInvokeableAction
 }
 ```
 
-It is important to note that the invokable actions should be added to the queue the same way as the previous examples, by running the ```execute()``` method after the ```onQueue()``` method.
+The actions using the `__invoke()` method should be added to the queue the same way as explained in the examples above, by running the `execute()` method after the `onQueue()` method.
 
 ```php
-$action->onQueue()->execute($model, $requestData);
+$myInvokeableAction->onQueue()->execute($model, $requestData);
 ```
 
 ### Testing queued actions

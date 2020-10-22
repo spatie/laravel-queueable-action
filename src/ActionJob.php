@@ -69,11 +69,7 @@ class ActionJob implements ShouldQueue
     public function handle()
     {
         $action = app($this->actionClass);
-        if (property_exists($action, 'queueMethod')) {
-            $action->{$action->queueMethod}(...$this->parameters);
-        } else {
-            $action->execute(...$this->parameters);
-        }
+        $action->{$action->queueMethod()}(...$this->parameters);
     }
 
     protected function resolveQueueableProperties($action)
