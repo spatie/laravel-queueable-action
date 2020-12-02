@@ -2,6 +2,10 @@
 
 All notable changes to `laravel-queueable-actions` will be documented in this file
 
+## 2.9.0 - 20202-12-02
+
+- add support for PHP 8
+
 ## 2.8.0 - 2020-10-22
 
 - Add support for invokeable actions (#36)
