@@ -15,6 +15,17 @@ class DummyClass
     }
 
     /**
+     * Static class constructor.
+     *
+     * @param  mixed $params
+     * @return static
+     */
+    public static function make(...$params)
+    {
+        return new static(...func_get_args());
+    }
+
+    /**
      * Execute the action.
      *
      * @return mixed
