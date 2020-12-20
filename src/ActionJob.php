@@ -2,7 +2,7 @@
 
 namespace Spatie\QueueableAction;
 
-use Exception;
+use Throwable;
 use Illuminate\Bus\Queueable;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Foundation\Bus\Dispatchable;
@@ -59,7 +59,7 @@ class ActionJob implements ShouldQueue
         return $this->middleware;
     }
 
-    public function failed(Exception $exception)
+    public function failed(Throwable $exception)
     {
         if ($this->onFailCallback) {
             return ($this->onFailCallback)($exception);
