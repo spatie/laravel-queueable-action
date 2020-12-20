@@ -2,7 +2,11 @@
 
 All notable changes to `laravel-queueable-actions` will be documented in this file
 
-## 2.9.0 - 20202-12-02
+## 2.9.1 - 2020-12-20
+
+- update `failed` method to accept `Throwable` (#44)
+
+## 2.9.0 - 2020-12-02
 
 - add support for PHP 8
 
