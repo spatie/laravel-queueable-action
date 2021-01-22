@@ -215,11 +215,6 @@ class CustomTagsAction
 }
 ```
 
-### Custom Action Job
-
-you
-
-
 ### What is the difference between actions and jobs?
 
 In short: constructor injection allows for much more flexibility.
