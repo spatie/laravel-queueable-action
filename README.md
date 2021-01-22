@@ -5,7 +5,7 @@
 ![Check & fix styling](https://github.com/spatie/laravel-queueable-action/workflows/Check%20&%20fix%20styling/badge.svg)
 [![Total Downloads](https://img.shields.io/packagist/dt/spatie/laravel-queueable-action.svg?style=flat-square)](https://packagist.org/packages/spatie/laravel-queueable-action)
 
-Actions are a way of structuring your business logic in Laravel. 
+Actions are a way of structuring your business logic in Laravel.
 This package adds easy support to make them queueable.
 
 ```php
@@ -34,9 +34,28 @@ You can install the package via composer:
 composer require spatie/laravel-queueable-action
 ```
 
+You can optionally publish the config file with:
+
+```bash
+php artisan vendor:publish --provider="Spatie\QueueableAction\QueueableActionServiceProvider" --tag="config"
+```
+
+This is the contents of the published config file:
+
+```php
+return [
+    /*
+     * The job class that will be dispatched.
+     * If you would like to change it and use your own job class,
+     * it must extends the \Spatie\QueueableAction\ActionJob class.
+     */
+    'job_class' => \Spatie\QueueableAction\ActionJob::class,
+];
+```
+
 ## Usage
 
-If you want to know about the reasoning behind actions and their asynchronous usage, 
+If you want to know about the reasoning behind actions and their asynchronous usage,
 you should read the dedicated blog post: [https://stitcher.io/blog/laravel-queueable-actions](https://stitcher.io/blog/laravel-queueable-actions).
 
 You can use the following Artisan command to generate queueable and synchronous action classes on the fly.
@@ -57,7 +76,7 @@ class MyAction
         ServiceFromTheContainer $service
     ) {
         // Constructor arguments can come from the container.
-    
+
         $this->otherAction = $otherAction;
         $this->service = $service;
     }
@@ -80,10 +99,10 @@ class MyController
         MyAction $action
     ) {
         $requestData = RequestData::fromRequest($myRequest);
-        
+
         // Execute the action on the queue:
         $action->onQueue()->execute($model, $requestData);
-        
+
         // Or right now:
         $action->execute($model, $requestData);
     }
@@ -122,7 +141,7 @@ The package provides some test assertions in the `Spatie\QueueableAction\Testing
 public function it_queues_an_action()
 {
     Queue::fake();
-    
+
     (new DoSomethingAction)->onQueue()->execute();
 
     QueueableActionFake::assertPushed(DoSomethingAction::class);
@@ -143,7 +162,7 @@ Feel free to send a PR if you feel any of the other `QueueFake` assertions are m
 
 ### Chaining actions
 
-You can chain actions by wrapping them in the `ActionJob`. 
+You can chain actions by wrapping them in the `ActionJob`.
 
 Here's an example of two actions with the same arguments:
 
@@ -196,9 +215,14 @@ class CustomTagsAction
 }
 ```
 
+### Custom Action Job
+
+you
+
+
 ### What is the difference between actions and jobs?
 
-In short: constructor injection allows for much more flexibility. 
+In short: constructor injection allows for much more flexibility.
 You can read an in-depth explanation here: [https://stitcher.io/blog/laravel-queueable-actions](https://stitcher.io/blog/laravel-queueable-actions#what's-the-difference-with-jobs?!?).
 
 ### Testing the package

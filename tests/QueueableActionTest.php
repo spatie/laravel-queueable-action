@@ -3,17 +3,21 @@
 namespace Spatie\QueueableAction\Tests;
 
 use Exception;
+use Illuminate\Support\Facades\Config;
 use Illuminate\Support\Facades\Queue;
 use Spatie\QueueableAction\ActionJob;
+use Spatie\QueueableAction\Exceptions\InvalidConfiguration;
 use Spatie\QueueableAction\Tests\TestClasses\ActionWithFailedMethod;
 use Spatie\QueueableAction\Tests\TestClasses\ComplexAction;
 use Spatie\QueueableAction\Tests\TestClasses\ContinueMiddleware;
+use Spatie\QueueableAction\Tests\TestClasses\CustomActionJob;
 use Spatie\QueueableAction\Tests\TestClasses\DataObject;
 use Spatie\QueueableAction\Tests\TestClasses\FailingAction;
 use Spatie\QueueableAction\Tests\TestClasses\InvokeableAction;
 use Spatie\QueueableAction\Tests\TestClasses\MiddlewareAction;
 use Spatie\QueueableAction\Tests\TestClasses\SimpleAction;
 use Spatie\QueueableAction\Tests\TestClasses\TaggedAction;
+use stdClass;
 
 class QueueableActionTest extends TestCase
 {
@@ -188,5 +192,35 @@ class QueueableActionTest extends TestCase
                 && count($action->middleware()) === 1
                 && $action->middleware[0] instanceof ContinueMiddleware;
         });
+    }
+
+    /** @test */
+    public function the_action_job_class_can_be_changed()
+    {
+        Queue::fake();
+
+        Config::set('queuableaction.job_class', CustomActionJob::class);
+
+        $action = new SimpleAction();
+
+        $action->onQueue()->execute();
+
+        Queue::assertPushed(CustomActionJob::class);
+        Queue::assertNotPushed(ActionJob::class);
+    }
+
+    /** @test */
+    public function a_custom_job_class_must_extends_action_job()
+    {
+        Queue::fake();
+
+        Config::set('queuableaction.job_class', stdClass::class);
+
+        $action = new SimpleAction();
+
+        $this->expectException(InvalidConfiguration::class);
+        $this->expectExceptionMessage("The given job class `". stdClass::class ."` does not extend `".ActionJob::class."`");
+
+        $action->onQueue()->execute();
     }
 }
