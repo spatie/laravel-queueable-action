@@ -137,6 +137,8 @@ The following assertions are available:
 QueueableActionFake::assertPushed(string $actionClass);
 QueueableActionFake::assertPushedTimes(string $actionClass, int $times = 1);
 QueueableActionFake::assertNotPushed(string $actionClass);
+QueueableActionFake::assertPushedWithChain(string $actionClass, array $expextedActionChain = [])
+QueueableActionFake::assertPushedWithoutChain(string $actionClass)
 ```
 
 Feel free to send a PR if you feel any of the other `QueueFake` assertions are missing.
