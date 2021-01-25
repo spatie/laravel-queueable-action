@@ -5,6 +5,7 @@ namespace Spatie\QueueableAction\Tests\Testing;
 use Illuminate\Support\Facades\Queue;
 use PHPUnit\Framework\Assert;
 use PHPUnit\Framework\ExpectationFailedException;
+use Spatie\QueueableAction\ActionJob;
 use Spatie\QueueableAction\Testing\QueueableActionFake;
 use Spatie\QueueableAction\Tests\TestCase;
 use Spatie\QueueableAction\Tests\TestClasses\SimpleAction;
@@ -56,5 +57,34 @@ class QueueableActionTest extends TestCase
         }
 
         Assert::fail('QueueableAction did not complain about missing `Queue::fake()`.');
+    }
+
+    /** @test */
+    public function it_can_assert_an_action_with_chain_was_pushed()
+    {
+        Queue::fake();
+
+        $action = new SimpleAction();
+
+        $action->onQueue()
+            ->execute()
+            ->chain([
+                new ActionJob(SimpleAction::class),
+                new ActionJob(SimpleAction::class),
+            ]);
+
+        QueueableActionFake::assertPushedWithChain(SimpleAction::class, [SimpleAction::class, SimpleAction::class]);
+    }
+
+    /** @test */
+    public function it_can_assert_an_action_without_chain_was_pushed()
+    {
+        Queue::fake();
+
+        $action = new SimpleAction();
+
+        $action->onQueue()->execute();
+
+        QueueableActionFake::assertPushedWithoutChain(SimpleAction::class);
     }
 }

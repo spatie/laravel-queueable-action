@@ -36,6 +36,36 @@ class QueueableActionFake
         Assert::assertFalse($pushed, "`{$actionJobClass}` was pushed.");
     }
 
+    public static function assertPushedWithChain(string $actionJobClass, array $expectedActionChain = [])
+    {
+        static::assertQueueIsFake();
+
+        $pushed = static::actionJobWasPushed($actionJobClass);
+
+        Assert::assertTrue($pushed, "`{$actionJobClass}` was not pushed.");
+
+        Assert::assertTrue(
+            static::getChainedClasses()->all() === $expectedActionChain,
+            'The expected chain was not pushed.'
+        );
+    }
+
+    public static function assertPushedWithoutChain(string $actionJobClass)
+    {
+        static::assertQueueIsFake();
+
+        $pushed = static::actionJobWasPushed($actionJobClass);
+
+        Assert::assertTrue($pushed, "`{$actionJobClass}` was not pushed.");
+
+        $matching = static::getChainedClasses();
+
+        Assert::assertTrue(
+            $matching->isEmpty(),
+            'The expected chain was not empty.'
+        );
+    }
+
     protected static function actionJobWasPushed(string $actionJobClass): bool
     {
         return static::getPushedCount($actionJobClass) > 0;
@@ -56,5 +86,17 @@ class QueueableActionFake
     protected static function assertQueueIsFake()
     {
         Assert::assertTrue(Queue::getFacadeRoot() instanceof QueueFake, 'Queue was not faked. Use `Queue::fake()`.');
+    }
+
+    protected static function getChainedClasses()
+    {
+        return collect(Queue::pushedJobs()[ActionJob::class] ?? [])
+            ->map(fn ($actionJob) => $actionJob['job']->chained)
+            ->map(function ($chain) {
+                return collect($chain)->map(function ($job) {
+                    return unserialize($job)->displayName();
+                });
+            })
+            ->flatten();
     }
 }
