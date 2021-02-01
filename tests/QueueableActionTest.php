@@ -3,12 +3,16 @@
 namespace Spatie\QueueableAction\Tests;
 
 use Exception;
+use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Queue;
+use Illuminate\Support\Facades\Schema;
 use Spatie\QueueableAction\ActionJob;
 use Spatie\QueueableAction\Tests\TestClasses\ActionWithFailedMethod;
 use Spatie\QueueableAction\Tests\TestClasses\ComplexAction;
 use Spatie\QueueableAction\Tests\TestClasses\ContinueMiddleware;
 use Spatie\QueueableAction\Tests\TestClasses\DataObject;
+use Spatie\QueueableAction\Tests\TestClasses\ModelSerializationUser;
+use Spatie\QueueableAction\Tests\TestClasses\EloquentModelAction;
 use Spatie\QueueableAction\Tests\TestClasses\FailingAction;
 use Spatie\QueueableAction\Tests\TestClasses\InvokeableAction;
 use Spatie\QueueableAction\Tests\TestClasses\MiddlewareAction;
@@ -17,6 +21,21 @@ use Spatie\QueueableAction\Tests\TestClasses\TaggedAction;
 
 class QueueableActionTest extends TestCase
 {
+    protected function getEnvironmentSetUp($app)
+    {
+        $app['config']->set('database.default', 'testing');
+    }
+
+    protected function setUp(): void
+    {
+        parent::setUp();
+
+        Schema::create('users', function (Blueprint $table) {
+            $table->increments('id');
+            $table->string('status');
+        });
+    }
+
     /** @test */
     public function an_action_can_be_queued()
     {
@@ -188,5 +207,33 @@ class QueueableActionTest extends TestCase
                 && count($action->middleware()) === 1
                 && $action->middleware[0] instanceof ContinueMiddleware;
         });
+    }
+
+    /** @test */
+    public function an_action_serializes_and_deserializes_an_eloquent_model()
+    {
+        $user = ModelSerializationUser::create([
+            'status' => 'unverified',
+        ]);
+
+        /** @var \Spatie\QueueableAction\Tests\TestClasses\EloquentModelAction $action */
+        $action = app(EloquentModelAction::class);
+
+        $actionJob = new ActionJob($action, [$user]);
+
+        // simulate action job is push to the queue
+        $serialized = serialize($actionJob);
+
+        // model change after pushed to queue, but before handling
+        $user->update(['status' => 'verified']);
+
+        // simulate action job is handled by a queue worker
+        $unSerialized = unserialize($serialized);
+
+        // the model should be deserialized by pulling the latest instance from the database
+        $unSerializedModel = $unSerialized->parameters()[0];
+        $this->assertInstanceOf(ModelSerializationUser::class, $unSerializedModel);
+        $this->assertSame($user->id, $unSerializedModel->id);
+        $this->assertSame('verified', $unSerializedModel->status);
     }
 }
