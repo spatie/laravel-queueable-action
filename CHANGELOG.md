@@ -2,6 +2,10 @@
 
 All notable changes to `laravel-queueable-actions` will be documented in this file
 
+## 2.10.2 - 2020-02-02
+
+- Fix (de)serialization of Models for queued action jobs (#48-
+
 ## 2.10.1 - 2020-02-02
 
 - Add new QueueFake methods(`assertPushedWithChain`, `assertPushedWithoutChain`) (#47)
