@@ -10,4 +10,3 @@ class ModelSerializationUser extends Model
     public $guarded = [];
     public $timestamps = false;
 }
-
