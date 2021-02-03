@@ -2,6 +2,8 @@
 
 namespace Spatie\QueueableAction;
 
+use Spatie\QueueableAction\Exceptions\InvalidConfiguration;
+
 trait QueueableAction
 {
     /**
@@ -23,7 +25,9 @@ trait QueueableAction
 
             public function execute(...$parameters)
             {
-                return dispatch(new ActionJob($this->action, $parameters))
+                $actionJobClass = $this->determineActionJobClass();
+
+                return dispatch(new $actionJobClass($this->action, $parameters))
                     ->onQueue($this->queue);
             }
 
@@ -38,6 +42,17 @@ trait QueueableAction
                 if (isset($this->action->queue)) {
                     $this->queue = $this->action->queue;
                 }
+            }
+
+            protected function determineActionJobClass(): string
+            {
+                $actionJobClass = config('queuableaction.job_class') ?? ActionJob::class;
+
+                if (! is_a($actionJobClass, ActionJob::class, true)) {
+                    throw InvalidConfiguration::jobClassIsNotValid($actionJobClass);
+                }
+
+                return $actionJobClass;
             }
         };
 
