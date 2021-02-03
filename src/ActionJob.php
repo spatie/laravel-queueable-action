@@ -11,7 +11,14 @@ use Throwable;
 
 class ActionJob implements ShouldQueue
 {
-    use Dispatchable, InteractsWithQueue, Queueable, SerializesModels;
+    use Dispatchable, InteractsWithQueue, Queueable;
+
+    use SerializesModels {
+        __sleep as serializesModelsSleep;
+        __wakeup as serializesModelsWakeup;
+        __serialize as serializesModelsSerialize;
+        __unserialize as serializesModelsUnserialize;
+    }
 
     /** @var string */
     protected $actionClass;
@@ -59,6 +66,11 @@ class ActionJob implements ShouldQueue
         return $this->middleware;
     }
 
+    public function parameters()
+    {
+        return $this->parameters;
+    }
+
     public function failed(Throwable $exception)
     {
         if ($this->onFailCallback) {
@@ -70,6 +82,44 @@ class ActionJob implements ShouldQueue
     {
         $action = app($this->actionClass);
         $action->{$action->queueMethod()}(...$this->parameters);
+    }
+
+    public function __sleep()
+    {
+        foreach ($this->parameters as $index => $parameter) {
+            $this->parameters[$index] = $this->getSerializedPropertyValue($parameter);
+        }
+
+        $this->serializesModelsSleep();
+    }
+
+    public function __wakeup()
+    {
+        $this->serializesModelsWakeup();
+
+        foreach ($this->parameters as $index => $parameter) {
+            $this->parameters[$index] = $this->getRestoredPropertyValue($parameter);
+        }
+    }
+
+    public function __serialize()
+    {
+        foreach ($this->parameters as $index => $parameter) {
+            $this->parameters[$index] = $this->getSerializedPropertyValue($parameter);
+        }
+
+        return $this->serializesModelsSerialize();
+    }
+
+    public function __unserialize(array $values)
+    {
+        $this->serializesModelsUnserialize($values);
+
+        foreach ($this->parameters as $index => $parameter) {
+            $this->parameters[$index] = $this->getRestoredPropertyValue($parameter);
+        }
+
+        return $values;
     }
 
     protected function resolveQueueableProperties($action)
