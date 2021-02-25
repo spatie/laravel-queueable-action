@@ -2,9 +2,13 @@
 
 All notable changes to `laravel-queueable-actions` will be documented in this file
 
+## 2.10.3 - 2021-02-25
+
+- Fix for broken actions (#49)
+
 ## 2.10.2 - 2020-02-02
 
-- Fix (de)serialization of Models for queued action jobs (#48-
+- Fix (de)serialization of Models for queued action jobs (#48)
 
 ## 2.10.1 - 2020-02-02
 

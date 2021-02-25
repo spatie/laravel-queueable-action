@@ -90,7 +90,7 @@ class ActionJob implements ShouldQueue
             $this->parameters[$index] = $this->getSerializedPropertyValue($parameter);
         }
 
-        $this->serializesModelsSleep();
+        return $this->serializesModelsSleep();
     }
 
     public function __wakeup()
