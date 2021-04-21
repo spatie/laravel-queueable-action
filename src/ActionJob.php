@@ -43,7 +43,6 @@ class ActionJob implements ShouldQueue
             $this->tags = $action->tags();
             $this->middleware = $action->middleware();
 
-            $this->middleware = $action->middleware();
             if (method_exists($action, 'backoff')) {
                 $this->backoff = $action->backoff();
             }
