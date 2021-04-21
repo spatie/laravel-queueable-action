@@ -10,6 +10,8 @@ use Illuminate\Support\Facades\Schema;
 use Spatie\QueueableAction\ActionJob;
 use Spatie\QueueableAction\Exceptions\InvalidConfiguration;
 use Spatie\QueueableAction\Tests\TestClasses\ActionWithFailedMethod;
+use Spatie\QueueableAction\Tests\TestClasses\BackoffAction;
+use Spatie\QueueableAction\Tests\TestClasses\BackoffPropertyAction;
 use Spatie\QueueableAction\Tests\TestClasses\ComplexAction;
 use Spatie\QueueableAction\Tests\TestClasses\ContinueMiddleware;
 use Spatie\QueueableAction\Tests\TestClasses\CustomActionJob;
@@ -269,5 +271,33 @@ class QueueableActionTest extends TestCase
         $this->assertInstanceOf(ModelSerializationUser::class, $unSerializedModel);
         $this->assertSame($user->id, $unSerializedModel->id);
         $this->assertSame('verified', $unSerializedModel->status);
+    }
+
+    /** @test */
+    public function an_action_can_have_a_backoff_property(): void
+    {
+        Queue::fake();
+
+        $action = new BackoffPropertyAction();
+
+        $action->onQueue()->execute();
+
+        Queue::assertPushed(ActionJob::class, function (ActionJob $action) {
+            return $action->backoff() === 5;
+        });
+    }
+
+    /** @test */
+    public function an_action_can_have_a_backoff_function(): void
+    {
+        Queue::fake();
+
+        $action = new BackoffAction();
+
+        $action->onQueue()->execute();
+
+        Queue::assertPushed(ActionJob::class, function ($action) {
+            return $action->backoff() === [5, 10, 15];
+        });
     }
 }

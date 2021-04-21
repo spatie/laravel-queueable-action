@@ -2,6 +2,10 @@
 
 All notable changes to `laravel-queueable-actions` will be documented in this file
 
+## 2.11.0 - 2021-04-21
+
+- Support for backoff (#53)
+
 ## 2.10.3 - 2021-02-25
 
 - Fix for broken actions (#49)
