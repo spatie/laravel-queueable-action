@@ -4,6 +4,8 @@ All notable changes to `laravel-queueable-actions` will be documented in this fi
 
 ## 2.11.0 - 2021-04-21
 
+- Require `php:^7.4|^8.0`
+- Require `laravel/framework:^8.0`
 - Support for backoff (#53)
 
 ## 2.10.3 - 2021-02-25
