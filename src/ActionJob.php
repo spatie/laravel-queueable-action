@@ -32,6 +32,8 @@ class ActionJob implements ShouldQueue
     /** @var callable */
     protected $onFailCallback;
 
+    protected $backoff;
+
     public function __construct($action, array $parameters = [])
     {
         $this->actionClass = is_string($action) ? $action : get_class($action);
@@ -42,6 +44,9 @@ class ActionJob implements ShouldQueue
             $this->middleware = $action->middleware();
 
             $this->middleware = $action->middleware();
+            if (method_exists($action, 'backoff')) {
+                $this->backoff = $action->backoff();
+            }
 
             if (method_exists($action, 'failed')) {
                 $this->onFailCallback = [$action, 'failed'];
@@ -69,6 +74,11 @@ class ActionJob implements ShouldQueue
     public function parameters()
     {
         return $this->parameters;
+    }
+
+    public function backoff()
+    {
+        return $this->backoff;
     }
 
     public function failed(Throwable $exception)

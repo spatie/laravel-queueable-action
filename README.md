@@ -217,6 +217,60 @@ class CustomTagsAction
 }
 ```
 
+### Action Backoff
+
+If you would like to configure how many seconds Laravel should wait before retrying an action that has encountered
+an exception on a per-action basis, you may do so by defining a backoff property on your action class:
+
+``` php
+class BackoffAction
+{
+    use QueueableAction;
+    
+    /**
+     * The number of seconds to wait before retrying the action.
+     *
+     * @var array<int>|int
+     */
+    public $backoff = 3;
+}
+```
+
+If you require more complex logic for determining the action's backoff time, you may define a backoff method on your action class:
+
+``` php
+class BackoffAction
+{
+    use QueueableAction;
+    
+    /**
+     * Calculate the number of seconds to wait before retrying the action.
+     *
+     */
+    public function backoff(): int
+    {
+        return 3;
+    }
+}
+```
+
+You may easily configure "exponential" backoffs by returning an array of backoff values from the backoff method.
+In this example, the retry delay will be 1 second for the first retry, 5 seconds for the second retry, and 10 seconds for the third retry:
+
+``` php
+class BackoffAction
+{
+    /**
+     * Calculate the number of seconds to wait before retrying the action.
+     *
+     */
+    public function backoff(): array
+    {
+        return [1, 5, 10];
+    }
+}
+```
+
 ### What is the difference between actions and jobs?
 
 In short: constructor injection allows for much more flexibility.
