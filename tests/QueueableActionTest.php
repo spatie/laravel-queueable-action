@@ -23,6 +23,7 @@ use Spatie\QueueableAction\Tests\TestClasses\MiddlewareAction;
 use Spatie\QueueableAction\Tests\TestClasses\ModelSerializationUser;
 use Spatie\QueueableAction\Tests\TestClasses\SimpleAction;
 use Spatie\QueueableAction\Tests\TestClasses\TaggedAction;
+use Spatie\QueueableAction\Tests\TestClasses\WithoutOverlappingMiddlewareAction;
 use stdClass;
 
 class QueueableActionTest extends TestCase
@@ -59,6 +60,17 @@ class QueueableActionTest extends TestCase
     {
         /** @var \Spatie\QueueableAction\Tests\TestClasses\ComplexAction $action */
         $action = app(ComplexAction::class);
+
+        $action->onQueue()->execute(new DataObject('foo'));
+
+        $this->assertLogHas('foo bar');
+    }
+
+    /** @test */
+    public function an_action_with_without_overlapping_middleware_can_be_executed_on_the_queue()
+    {
+        /** @var \Spatie\QueueableAction\Tests\TestClasses\WithoutOverlappingMiddlewareAction $action */
+        $action = app(WithoutOverlappingMiddlewareAction::class);
 
         $action->onQueue()->execute(new DataObject('foo'));
 
