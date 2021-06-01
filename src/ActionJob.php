@@ -2,6 +2,7 @@
 
 namespace Spatie\QueueableAction;
 
+use Illuminate\Bus\Batchable;
 use Illuminate\Bus\Queueable;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Foundation\Bus\Dispatchable;
@@ -11,7 +12,7 @@ use Throwable;
 
 class ActionJob implements ShouldQueue
 {
-    use Dispatchable, InteractsWithQueue, Queueable;
+    use Dispatchable, InteractsWithQueue, Queueable, Batchable;
 
     use SerializesModels {
         __sleep as serializesModelsSleep;
