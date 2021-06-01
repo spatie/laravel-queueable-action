@@ -3,7 +3,9 @@
 namespace Spatie\QueueableAction\Tests;
 
 use Exception;
+use Illuminate\Bus\PendingBatch;
 use Illuminate\Database\Schema\Blueprint;
+use Illuminate\Support\Facades\Bus;
 use Illuminate\Support\Facades\Config;
 use Illuminate\Support\Facades\Queue;
 use Illuminate\Support\Facades\Schema;
@@ -298,6 +300,24 @@ class QueueableActionTest extends TestCase
 
         Queue::assertPushed(ActionJob::class, function ($action) {
             return $action->backoff() === [5, 10, 15];
+        });
+    }
+
+    /** @test */
+    public function an_action_can_be_batched()
+    {
+        Bus::fake();
+
+        Bus::batch([
+            new ActionJob(SimpleAction::class),
+            new ActionJob(SimpleAction::class),
+            new ActionJob(SimpleAction::class),
+        ])->dispatch();
+
+        Bus::assertBatched(function (PendingBatch $batch): bool {
+            return $batch->jobs->count() === 3
+                && $batch->jobs->first() instanceof ActionJob
+                && $batch->jobs->first()->displayName() === SimpleAction::class;
         });
     }
 }
