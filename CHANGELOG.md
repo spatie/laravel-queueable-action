@@ -2,6 +2,10 @@
 
 All notable changes to `laravel-queueable-actions` will be documented in this file
 
+## 2.12.0 - 2021-06-01
+
+- add `Batchable` trait
+
 ## 2.11.0 - 2021-04-21
 
 - Require `php:^7.4|^8.0`
