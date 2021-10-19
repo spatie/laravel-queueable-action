@@ -73,7 +73,7 @@ class QueueableActionFake
 
     protected static function getPushedCount(string $actionJobClass): int
     {
-        return collect(Queue::pushedJobs()[ActionJob::class] ?? [])
+        return collect(Queue::pushedJobs()[config('queuableaction.job_class') ?? ActionJob::class] ?? [])
             ->map(function (array $queuedJob) {
                 return $queuedJob['job']->displayName();
             })
