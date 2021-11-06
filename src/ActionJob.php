@@ -30,8 +30,8 @@ class ActionJob implements ShouldQueue
     /** @var array */
     protected $tags = ['action_job'];
 
-    /** @var callable */
-    protected $onFailCallback;
+    /** @var string */
+    protected $onFailMethod;
 
     protected $backoff;
 
@@ -49,7 +49,7 @@ class ActionJob implements ShouldQueue
             }
 
             if (method_exists($action, 'failed')) {
-                $this->onFailCallback = [$action, 'failed'];
+                $this->onFailMethod = 'failed';
             }
         }
 
@@ -83,8 +83,9 @@ class ActionJob implements ShouldQueue
 
     public function failed(Throwable $exception)
     {
-        if ($this->onFailCallback) {
-            return ($this->onFailCallback)($exception);
+        if ($this->onFailMethod) {
+            $action = app($this->actionClass);
+            return $action->{$this->onFailMethod}($exception);
         }
     }
 

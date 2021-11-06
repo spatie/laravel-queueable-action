@@ -15,6 +15,7 @@ use Spatie\QueueableAction\Tests\TestClasses\ActionWithFailedMethod;
 use Spatie\QueueableAction\Tests\TestClasses\BackoffAction;
 use Spatie\QueueableAction\Tests\TestClasses\BackoffPropertyAction;
 use Spatie\QueueableAction\Tests\TestClasses\ComplexAction;
+use Spatie\QueueableAction\Tests\TestClasses\ClosureActionWithFailedMethod;
 use Spatie\QueueableAction\Tests\TestClasses\ContinueMiddleware;
 use Spatie\QueueableAction\Tests\TestClasses\CustomActionJob;
 use Spatie\QueueableAction\Tests\TestClasses\DataObject;
@@ -274,6 +275,24 @@ class QueueableActionTest extends TestCase
         $this->assertSame($user->id, $unSerializedModel->id);
         $this->assertSame('verified', $unSerializedModel->status);
     }
+
+    /** @test */
+    public function an_action_with_a_closure_and_a_failed_method_serializes()
+    {
+        /** @var \Spatie\QueueableAction\Tests\TestClasses\ClosureActionWithFailedMethod $action */
+        $action = app(ClosureActionWithFailedMethod::class);
+
+        $actionJob = new ActionJob($action);
+
+        // simulate action job is push to the queue
+        $serialized = serialize($actionJob);
+
+        // simulate action job is handled by a queue worker
+        $unSerialized = unserialize($serialized);
+
+        $this->assertInstanceOf(ActionJob::class, $actionJob);
+    }
+
 
     /** @test */
     public function an_action_can_have_a_backoff_property(): void
