@@ -2,6 +2,11 @@
 
 All notable changes to `laravel-queueable-actions` will be documented in this file
 
+## 2.13.0 - 2021-11-24
+
+- Drop support for PHP 7.4
+- Add support for PHP 8.1
+
 ## 2.12.0 - 2021-06-01
 
 - add `Batchable` trait
