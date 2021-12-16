@@ -4,6 +4,9 @@ namespace Spatie\QueueableAction;
 
 use Spatie\QueueableAction\Exceptions\InvalidConfiguration;
 
+/**
+ * @method void execute()
+ */
 trait QueueableAction
 {
     /**
