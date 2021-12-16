@@ -1,9 +1,8 @@
 # Queueable actions in Laravel
 
-[![Latest Version on Packagist](https://img.shields.io/packagist/v/spatie/laravel-queueable-action.svg?style=flat-square)](https://packagist.org/packages/spatie/laravel-queueable-action)
+
 ![GitHub Workflow Status](https://img.shields.io/github/workflow/status/spatie/laravel-queueable-action/run-tests?label=tests)
 ![Check & fix styling](https://github.com/spatie/laravel-queueable-action/workflows/Check%20&%20fix%20styling/badge.svg)
-[![Total Downloads](https://img.shields.io/packagist/dt/spatie/laravel-queueable-action.svg?style=flat-square)](https://packagist.org/packages/spatie/laravel-queueable-action)
 
 Actions are a way of structuring your business logic in Laravel.
 This package adds easy support to make them queueable.
@@ -20,7 +19,7 @@ $myAction->onQueue('my-favorite-queue')->execute();
 
 ## Support us
 
-[<img src="https://github-ads.s3.eu-central-1.amazonaws.com/laravel-queueable-action.jpg?t=1" width="419px" />](https://spatie.be/github-ad-click/laravel-queueable-action)
+[`<img src="https://github-ads.s3.eu-central-1.amazonaws.com/laravel-queueable-action.jpg?t=1" width="419px" />`](https://spatie.be/github-ad-click/laravel-queueable-action)
 
 We invest a lot of resources into creating [best in class open source packages](https://spatie.be/open-source). You can support us by [buying one of our paid products](https://spatie.be/open-source/support-us).
 
@@ -43,6 +42,8 @@ php artisan vendor:publish --provider="Spatie\QueueableAction\QueueableActionSer
 This is the contents of the published config file:
 
 ```php
+
+
 return [
     /*
      * The job class that will be dispatched.
@@ -50,6 +51,13 @@ return [
      * it must extends the \Spatie\QueueableAction\ActionJob class.
      */
     'job_class' => \Spatie\QueueableAction\ActionJob::class,
+  
+     /*
+     * Public method settings for an action.
+     * The first execution option is given by the __invoke hook.
+     * if you want to configure a different method update the value e.g. run.
+     */
+    'executable_action_method' => 'execute',
 ];
 ```
 
@@ -66,7 +74,7 @@ php artisan make:action MyAction [--sync]
 
 Here's an example of queueable actions in use:
 
-``` php
+```php
 class MyAction
 {
     use QueueableAction;
@@ -111,7 +119,7 @@ class MyController
 
 The package also supports actions using the `__invoke()` method. This will be detected automatically. Here is an example:
 
-``` php
+```php
 class MyInvokeableAction
 {
     use QueueableAction;
@@ -187,7 +195,7 @@ The `ActionJob` takes the action class *or* instance as the first argument follo
 
 If you want to change what tags show up in Horizon for your custom actions you can override the `tags()` function.
 
-``` php
+```php
 class CustomTagsAction
 {
     use QueueableAction;
@@ -204,7 +212,7 @@ class CustomTagsAction
 
 Middleware where action job passes through can be added by overriding the `middleware()` function.
 
-``` php
+```php
 class CustomTagsAction
 {
     use QueueableAction;
@@ -222,11 +230,11 @@ class CustomTagsAction
 If you would like to configure how many seconds Laravel should wait before retrying an action that has encountered
 an exception on a per-action basis, you may do so by defining a backoff property on your action class:
 
-``` php
+```php
 class BackoffAction
 {
     use QueueableAction;
-    
+  
     /**
      * The number of seconds to wait before retrying the action.
      *
@@ -238,11 +246,11 @@ class BackoffAction
 
 If you require more complex logic for determining the action's backoff time, you may define a backoff method on your action class:
 
-``` php
+```php
 class BackoffAction
 {
     use QueueableAction;
-    
+  
     /**
      * Calculate the number of seconds to wait before retrying the action.
      *
@@ -257,7 +265,7 @@ class BackoffAction
 You may easily configure "exponential" backoffs by returning an array of backoff values from the backoff method.
 In this example, the retry delay will be 1 second for the first retry, 5 seconds for the second retry, and 10 seconds for the third retry:
 
-``` php
+```php
 class BackoffAction
 {
     /**
@@ -278,7 +286,7 @@ You can read an in-depth explanation here: [https://stitcher.io/blog/laravel-que
 
 ### Testing the package
 
-``` bash
+```bash
 composer test
 ```
 

@@ -75,7 +75,7 @@ trait QueueableAction
             return '__invoke';
         }
 
-        return 'execute';
+        return config('queuableaction.executable_action_method') ?? 'execute';
     }
 
     /**
