@@ -16,6 +16,7 @@ use Spatie\QueueableAction\Tests\TestClasses\BackoffAction;
 use Spatie\QueueableAction\Tests\TestClasses\BackoffPropertyAction;
 use Spatie\QueueableAction\Tests\TestClasses\ComplexAction;
 use Spatie\QueueableAction\Tests\TestClasses\ContinueMiddleware;
+use Spatie\QueueableAction\Tests\TestClasses\CountRunsMiddleware;
 use Spatie\QueueableAction\Tests\TestClasses\CustomActionJob;
 use Spatie\QueueableAction\Tests\TestClasses\DataObject;
 use Spatie\QueueableAction\Tests\TestClasses\EloquentModelAction;
@@ -215,6 +216,25 @@ class QueueableActionTest extends TestCase
                 && count($action->middleware()) === 1
                 && $action->middleware[0] instanceof ContinueMiddleware;
         });
+    }
+
+    /** @test */
+    public function middleware_runs_only_once()
+    {
+        $_SERVER['_test_run_count_middleware'] = 0;
+
+        $action = new class extends SimpleAction {
+            public function middleware(): array
+            {
+                return [new CountRunsMiddleware()];
+            }
+        };
+
+        $action->onQueue()->execute();
+
+        $this->assertEquals(1, $_SERVER['_test_run_count_middleware']);
+
+        unset($_SERVER['_test_run_count_middleware']); // cleanup
     }
 
     /** @test */
