@@ -212,9 +212,10 @@ class QueueableActionTest extends TestCase
         $action->onQueue()->execute();
 
         Queue::assertPushed(ActionJob::class, function ($action) {
-            return is_array($action->middleware())
-                && count($action->middleware()) === 1
-                && $action->middleware[0] instanceof ContinueMiddleware;
+            $middleware = array_merge($action->middleware, $action->middleware());
+
+            return count($middleware) === 1
+                && $middleware[0] instanceof ContinueMiddleware;
         });
     }
 
