@@ -68,7 +68,7 @@ class ActionJob implements ShouldQueue
 
     public function middleware()
     {
-        return $this->middleware;
+        return [];
     }
 
     public function parameters()
