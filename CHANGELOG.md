@@ -2,6 +2,10 @@
 
 All notable changes to `laravel-queueable-actions` will be documented in this file
 
+## 2.13.1 - 2022-01-14
+
+- Fix for running middleware twice (#66)
+
 ## 2.13.0 - 2021-11-24
 
 - Drop support for PHP 7.4
