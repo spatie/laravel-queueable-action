@@ -2,6 +2,10 @@
 
 All notable changes to `laravel-queueable-actions` will be documented in this file
 
+## 2.14.0 - 2022-02-03
+
+- Support for Laravel 9
+
 ## 2.13.1 - 2022-01-14
 
 - Fix for running middleware twice (#66)
