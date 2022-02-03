@@ -35,11 +35,11 @@
     ],
     "require": {
         "php": "^8.0",
-        "laravel/framework": "^8.0"
+        "laravel/framework": "^8.0|^9.0"
     },
     "require-dev": {
         "mockery/mockery": "^1.4",
-        "orchestra/testbench": "^6.23",
+        "orchestra/testbench": "^6.23|^7.0",
         "phpunit/phpunit": "^9.5.10"
     },
     "autoload": {
@@ -65,5 +65,7 @@
                 "Spatie\\QueueableAction\\QueueableActionServiceProvider"
             ]
         }
-    }
+    },
+    "minimum-stability" : "dev",
+    "prefer-stable" : true
 }
