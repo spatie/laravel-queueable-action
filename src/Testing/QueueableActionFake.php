@@ -73,7 +73,7 @@ class QueueableActionFake
 
     protected static function getPushedCount(string $actionJobClass): int
     {
-        return collect(Queue::pushedJobs()[ActionJob::class] ?? [])
+        return collect(Queue::pushedJobs()[self::determineActionJobClass()] ?? [])
             ->map(function (array $queuedJob) {
                 return $queuedJob['job']->displayName();
             })
@@ -90,7 +90,7 @@ class QueueableActionFake
 
     protected static function getChainedClasses()
     {
-        return collect(Queue::pushedJobs()[ActionJob::class] ?? [])
+        return collect(Queue::pushedJobs()[self::determineActionJobClass()] ?? [])
             ->map(fn ($actionJob) => $actionJob['job']->chained)
             ->map(function ($chain) {
                 return collect($chain)->map(function ($job) {
@@ -98,5 +98,10 @@ class QueueableActionFake
                 });
             })
             ->flatten();
+    }
+
+    protected static function determineActionJobClass(): string
+    {
+        return config('queuableaction.job_class') ?? ActionJob::class;
     }
 }

@@ -2,12 +2,15 @@
 
 namespace Spatie\QueueableAction\Tests\Testing;
 
+use Illuminate\Support\Facades\Config;
 use Illuminate\Support\Facades\Queue;
 use PHPUnit\Framework\Assert;
 use PHPUnit\Framework\ExpectationFailedException;
 use Spatie\QueueableAction\ActionJob;
 use Spatie\QueueableAction\Testing\QueueableActionFake;
 use Spatie\QueueableAction\Tests\TestCase;
+use Spatie\QueueableAction\Tests\TestClasses\CustomActionJob;
+use Spatie\QueueableAction\Tests\TestClasses\QueueableActionFakeTestClass;
 use Spatie\QueueableAction\Tests\TestClasses\SimpleAction;
 
 class QueueableActionTest extends TestCase
@@ -86,5 +89,35 @@ class QueueableActionTest extends TestCase
         $action->onQueue()->execute();
 
         QueueableActionFake::assertPushedWithoutChain(SimpleAction::class);
+    }
+
+    /** @test */
+    public function get_pushed_count_can_use_custom_action_job_class()
+    {
+        Config::set('queuableaction.job_class', CustomActionJob::class);
+        Queue::fake();
+
+        $action = new SimpleAction();
+        $action->onQueue()->execute();
+
+        $this->assertEquals(1, QueueableActionFakeTestClass::getPushedCountTest(SimpleAction::class));
+    }
+
+    /** @test */
+    public function get_chained_classes_can_use_custom_action_job_class()
+    {
+        Config::set('queuableaction.job_class', CustomActionJob::class);
+        Queue::fake();
+
+        $action = new SimpleAction();
+
+        $action->onQueue()
+            ->execute()
+            ->chain([
+                new CustomActionJob(SimpleAction::class),
+                new CustomActionJob(SimpleAction::class),
+            ]);
+
+        $this->assertCount(2, QueueableActionFakeTestClass::getChainedClassesTest());
     }
 }
