@@ -11,4 +11,4 @@
 /tests              export-ignore
 /.editorconfig      export-ignore
 /CHANGELOG.md       export-ignore
-/.php-cs-fixer.dist.php export-ignore
+/.php-cs.dist.php   export-ignore
