@@ -85,4 +85,12 @@ trait QueueableAction
     {
         return $this->backoff ?? [];
     }
+
+    /**
+     * @return string[]
+     */
+    public function tags(): array
+    {
+        return [self::class];
+    }
 }
