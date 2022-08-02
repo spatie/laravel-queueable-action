@@ -59,11 +59,6 @@ trait QueueableAction
         return $class;
     }
 
-    public function tags(): array
-    {
-        return ['action_job'];
-    }
-
     public function middleware(): array
     {
         return [];
