@@ -154,7 +154,7 @@ class QueueableActionTest extends TestCase
         $action->onQueue()->execute();
 
         Queue::assertPushed(ActionJob::class, function ($action) {
-            return $action->tags() === ['action_job'];
+            return $action->tags() === [SimpleAction::class];
         });
     }
 
