@@ -53,7 +53,7 @@ class ActionJob implements ShouldQueue
             }
         }
 
-        $this->resolveQueueableProperties($action);
+        $this->resolveQueueableProperties($this->actionClass);
     }
 
     public function displayName(): string
