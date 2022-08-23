@@ -148,7 +148,7 @@ class ActionJob implements ShouldQueue
 
         foreach ($queueableProperties as $queueableProperty) {
             if (property_exists($action, $queueableProperty)) {
-                $this->{$queueableProperty} = $action->{$queueableProperty};
+                $this->{$queueableProperty} = app($action)->{$queueableProperty};
             }
         }
     }
