@@ -15,8 +15,6 @@ class ActionJob implements ShouldQueue
     use Dispatchable, InteractsWithQueue, Queueable, Batchable;
 
     use SerializesModels {
-        __sleep as serializesModelsSleep;
-        __wakeup as serializesModelsWakeup;
         __serialize as serializesModelsSerialize;
         __unserialize as serializesModelsUnserialize;
     }
@@ -92,24 +90,6 @@ class ActionJob implements ShouldQueue
     {
         $action = app($this->actionClass);
         $action->{$action->queueMethod()}(...$this->parameters);
-    }
-
-    public function __sleep()
-    {
-        foreach ($this->parameters as $index => $parameter) {
-            $this->parameters[$index] = $this->getSerializedPropertyValue($parameter);
-        }
-
-        return $this->serializesModelsSleep();
-    }
-
-    public function __wakeup()
-    {
-        $this->serializesModelsWakeup();
-
-        foreach ($this->parameters as $index => $parameter) {
-            $this->parameters[$index] = $this->getRestoredPropertyValue($parameter);
-        }
     }
 
     public function __serialize()

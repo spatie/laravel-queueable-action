@@ -14,7 +14,7 @@ class ActionMakeCommandTest extends TestCase
 
         $this->artisan('make:action', [
             'name' => 'TestAction',
-        ])->expectsOutput('Action created successfully.')->assertExitCode(0);
+        ])->expectsOutputToContain('Action [app/Actions/TestAction.php] created successfully.')->assertExitCode(0);
     }
 
     /** @test */
@@ -25,7 +25,7 @@ class ActionMakeCommandTest extends TestCase
         $this->artisan('make:action', [
             'name' => 'TestAction',
             '--sync' => true,
-        ])->expectsOutput('Action created successfully.')->assertExitCode(0);
+        ])->expectsOutputToContain('Action [app/Actions/TestAction.php] created successfully.')->assertExitCode(0);
     }
 
     private function expectsGeneratedClass(string $filename, string $contents): void
