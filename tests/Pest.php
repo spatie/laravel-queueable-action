@@ -1,8 +1,8 @@
 <?php
 
-use Spatie\QueueableAction\Tests\TestCase;
-
 use function PHPUnit\Framework\assertStringContainsString;
+
+use Spatie\QueueableAction\Tests\TestCase;
 
 uses(TestCase::class)->in('.');
 
@@ -17,7 +17,7 @@ function assertLogHas(string $text)
 
 function clearLog()
 {
-    if (!file_exists(TestCase::LOG_PATH)) {
+    if (! file_exists(TestCase::LOG_PATH)) {
         return;
     }
 

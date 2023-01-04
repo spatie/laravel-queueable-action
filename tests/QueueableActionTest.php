@@ -190,8 +190,7 @@ test('an action can have job middleware', function () {
 test('middleware runs only once', function () {
     $_SERVER['_test_run_count_middleware'] = 0;
 
-    $action = new class extends SimpleAction
-    {
+    $action = new class extends SimpleAction {
         public function middleware(): array
         {
             return [new CountRunsMiddleware()];
