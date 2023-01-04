@@ -6,7 +6,6 @@ use PHPUnit\Framework\Assert;
 use PHPUnit\Framework\ExpectationFailedException;
 use Spatie\QueueableAction\ActionJob;
 use Spatie\QueueableAction\Testing\QueueableActionFake;
-use Spatie\QueueableAction\Tests\TestCase;
 use Spatie\QueueableAction\Tests\TestClasses\CustomActionJob;
 use Spatie\QueueableAction\Tests\TestClasses\QueueableActionFakeTestClass;
 use Spatie\QueueableAction\Tests\TestClasses\SimpleAction;
