@@ -28,317 +28,272 @@ use Spatie\QueueableAction\Tests\TestClasses\SimpleAction;
 use Spatie\QueueableAction\Tests\TestClasses\TaggedAction;
 use stdClass;
 
-class QueueableActionTest extends TestCase
-{
-    protected function getEnvironmentSetUp($app)
-    {
-        $app['config']->set('database.default', 'testing');
-    }
+beforeEach(function () {
+    config()->set('database.default', 'testing');
 
-    protected function setUp(): void
-    {
-        parent::setUp();
+    Schema::create('users', function (Blueprint $table) {
+        $table->increments('id');
+        $table->string('status');
+    });
+});
 
-        Schema::create('users', function (Blueprint $table) {
-            $table->increments('id');
-            $table->string('status');
-        });
-    }
+test('an action can be queued', function () {
+    Queue::fake();
 
-    /** @test */
-    public function an_action_can_be_queued()
-    {
-        Queue::fake();
+    $action = new SimpleAction();
 
-        $action = new SimpleAction();
+    $action->onQueue()->execute();
 
-        $action->onQueue()->execute();
+    Queue::assertPushed(ActionJob::class);
+});
 
-        Queue::assertPushed(ActionJob::class);
-    }
+test('an action with dependencies and input can be executed on the queue', function () {
+    /** @var \Spatie\QueueableAction\Tests\TestClasses\ComplexAction $action */
+    $action = app(ComplexAction::class);
 
-    /** @test */
-    public function an_action_with_dependencies_and_input_can_be_executed_on_the_queue()
-    {
-        /** @var \Spatie\QueueableAction\Tests\TestClasses\ComplexAction $action */
-        $action = app(ComplexAction::class);
+    $action->onQueue()->execute(new DataObject('foo'));
 
-        $action->onQueue()->execute(new DataObject('foo'));
+    assertLogHas('foo bar');
+});
 
-        $this->assertLogHas('foo bar');
-    }
+test('an action can be executed on a queue', function () {
+    Queue::fake();
 
-    /** @test */
-    public function an_action_can_be_executed_on_a_queue()
-    {
-        Queue::fake();
+    /** @var \Spatie\QueueableAction\Tests\TestClasses\ComplexAction $action */
+    $action = app(ComplexAction::class);
 
-        /** @var \Spatie\QueueableAction\Tests\TestClasses\ComplexAction $action */
-        $action = app(ComplexAction::class);
+    $action->queue = 'other';
 
-        $action->queue = 'other';
+    $action->onQueue()->execute(new DataObject('foo'));
 
-        $action->onQueue()->execute(new DataObject('foo'));
+    Queue::assertPushedOn('other', ActionJob::class);
+});
 
-        Queue::assertPushedOn('other', ActionJob::class);
-    }
+test('an action can be executed on a queue using the on queue method', function () {
+    Queue::fake();
 
-    /** @test */
-    public function an_action_can_be_executed_on_a_queue_using_the_on_queue_method()
-    {
-        Queue::fake();
+    /** @var \Spatie\QueueableAction\Tests\TestClasses\ComplexAction $action */
+    $action = app(ComplexAction::class);
 
-        /** @var \Spatie\QueueableAction\Tests\TestClasses\ComplexAction $action */
-        $action = app(ComplexAction::class);
+    $action->onQueue('other')->execute(new DataObject('foo'));
 
-        $action->onQueue('other')->execute(new DataObject('foo'));
+    Queue::assertPushedOn('other', ActionJob::class);
+});
 
-        Queue::assertPushedOn('other', ActionJob::class);
-    }
+test('an action is executed immediately if not queued', function () {
+    Queue::fake();
 
-    /** @test */
-    public function an_action_is_executed_immediately_if_not_queued()
-    {
-        Queue::fake();
+    /** @var \Spatie\QueueableAction\Tests\TestClasses\ComplexAction $action */
+    $action = app(ComplexAction::class);
 
-        /** @var \Spatie\QueueableAction\Tests\TestClasses\ComplexAction $action */
-        $action = app(ComplexAction::class);
+    $action->queue = 'other';
 
-        $action->queue = 'other';
+    $action->execute(new DataObject('foo'));
 
-        $action->execute(new DataObject('foo'));
+    Queue::assertNotPushed(ActionJob::class);
 
-        Queue::assertNotPushed(ActionJob::class);
+    assertLogHas('foo bar');
+});
 
-        $this->assertLogHas('foo bar');
-    }
+test('an action can be queued with a chain of other actions jobs', function () {
+    Queue::fake();
 
-    /** @test */
-    public function an_action_can_be_queued_with_a_chain_of_other_actions_jobs()
-    {
-        Queue::fake();
+    /** @var \Spatie\QueueableAction\Tests\TestClasses\ComplexAction $action */
+    $action = app(ComplexAction::class);
 
-        /** @var \Spatie\QueueableAction\Tests\TestClasses\ComplexAction $action */
-        $action = app(ComplexAction::class);
-
-        $action->onQueue()
-            ->execute(new DataObject('foo'))
-            ->chain([
-                new ActionJob(SimpleAction::class),
-            ]);
-
-        Queue::assertPushedWithChain(ActionJob::class, [
+    $action->onQueue()
+        ->execute(new DataObject('foo'))
+        ->chain([
             new ActionJob(SimpleAction::class),
         ]);
-    }
 
-    /** @test */
-    public function an_action_with_the_invoke_method_can_be_executed_on_a_queue()
-    {
-        /** @var \Spatie\QueueableAction\Tests\TestClasses\InvokeableAction $action */
-        $action = app(InvokeableAction::class);
+    Queue::assertPushedWithChain(ActionJob::class, [
+        new ActionJob(SimpleAction::class),
+    ]);
+});
 
-        $value = random_int(0, 10000);
-        $action->onQueue()->execute(new DataObject($value));
+test('an action with the invoke method can be executed on a queue', function () {
+    /** @var \Spatie\QueueableAction\Tests\TestClasses\InvokeableAction $action */
+    $action = app(InvokeableAction::class);
 
-        $this->assertLogHas('Invoked: '.$value.' bar');
-    }
+    $value = random_int(0, 10000);
+    $action->onQueue()->execute(new DataObject($value));
 
-    /** @test */
-    public function an_action_has_default_action_job_tag()
-    {
-        Queue::fake();
+    assertLogHas('Invoked: ' . $value . ' bar');
+});
 
-        $action = new SimpleAction();
+test('an action has default action job tag', function () {
+    Queue::fake();
 
+    $action = new SimpleAction();
+
+    $action->onQueue()->execute();
+
+    Queue::assertPushed(ActionJob::class, function ($action) {
+        return $action->tags() === [SimpleAction::class];
+    });
+});
+
+test('an action can have custom job tags', function () {
+    Queue::fake();
+
+    $action = new TaggedAction();
+
+    $action->onQueue()->execute();
+
+    Queue::assertPushed(ActionJob::class, function ($action) {
+        return $action->tags() === ['custom_tag', 'tagged_action'];
+    });
+});
+
+test('an action can have a custom failed callback', function () {
+    Queue::fake();
+
+    $action = new ActionWithFailedMethod();
+
+    $action->onQueue()->execute();
+
+    Queue::assertPushed(ActionJob::class, function ($action) {
+        return $action->failed(new Exception('foo')) === 'foo';
+    });
+});
+
+test('the failed callback is executed on failure', function () {
+    $action = new FailingAction();
+
+    try {
         $action->onQueue()->execute();
-
-        Queue::assertPushed(ActionJob::class, function ($action) {
-            return $action->tags() === [SimpleAction::class];
-        });
+    } catch (Exception $e) {
+        //
     }
 
-    /** @test */
-    public function an_action_can_have_custom_job_tags()
+    $this->assertSame('foobar', $_SERVER['_test_failed_message']);
+
+    unset($_SERVER['_test_failed_message']); // cleanup
+});
+
+test('an action can have job middleware', function () {
+    Queue::fake();
+
+    $action = new MiddlewareAction();
+
+    $action->onQueue()->execute();
+
+    Queue::assertPushed(ActionJob::class, function ($action) {
+        $middleware = array_merge($action->middleware, $action->middleware());
+
+        return count($middleware) === 1
+            && $middleware[0] instanceof ContinueMiddleware;
+    });
+});
+
+test('middleware runs only once', function () {
+    $_SERVER['_test_run_count_middleware'] = 0;
+
+    $action = new class extends SimpleAction
     {
-        Queue::fake();
-
-        $action = new TaggedAction();
-
-        $action->onQueue()->execute();
-
-        Queue::assertPushed(ActionJob::class, function ($action) {
-            return $action->tags() === ['custom_tag', 'tagged_action'];
-        });
-    }
-
-    public function an_action_can_have_a_custom_failed_callback()
-    {
-        Queue::fake();
-
-        $action = new ActionWithFailedMethod();
-
-
-        $action->onQueue()->execute();
-
-        Queue::assertPushed(ActionJob::class, function ($action) {
-            return $action->failed(new Exception('foo')) === 'foo';
-        });
-    }
-
-    /** @test */
-    public function the_failed_callback_is_executed_on_failure()
-    {
-        $action = new FailingAction();
-
-        try {
-            $action->onQueue()->execute();
-        } catch (Exception $e) {
-            //
+        public function middleware(): array
+        {
+            return [new CountRunsMiddleware()];
         }
+    };
 
-        $this->assertSame('foobar', $_SERVER['_test_failed_message']);
+    $action->onQueue()->execute();
 
-        unset($_SERVER['_test_failed_message']); // cleanup
-    }
+    $this->assertEquals(1, $_SERVER['_test_run_count_middleware']);
 
-    /** @test */
-    public function an_action_can_have_job_middleware()
-    {
-        Queue::fake();
+    unset($_SERVER['_test_run_count_middleware']); // cleanup
+});
 
-        $action = new MiddlewareAction();
+test('the action job class can be changed', function () {
+    Queue::fake();
 
-        $action->onQueue()->execute();
+    Config::set('queuableaction.job_class', CustomActionJob::class);
 
-        Queue::assertPushed(ActionJob::class, function ($action) {
-            $middleware = array_merge($action->middleware, $action->middleware());
+    $action = new SimpleAction();
 
-            return count($middleware) === 1
-                && $middleware[0] instanceof ContinueMiddleware;
-        });
-    }
+    $action->onQueue()->execute();
 
-    /** @test */
-    public function middleware_runs_only_once()
-    {
-        $_SERVER['_test_run_count_middleware'] = 0;
+    Queue::assertPushed(CustomActionJob::class);
+    Queue::assertNotPushed(ActionJob::class);
+});
 
-        $action = new class extends SimpleAction {
-            public function middleware(): array
-            {
-                return [new CountRunsMiddleware()];
-            }
-        };
+test('a custom job class must extends action job', function () {
+    Queue::fake();
 
-        $action->onQueue()->execute();
+    Config::set('queuableaction.job_class', stdClass::class);
 
-        $this->assertEquals(1, $_SERVER['_test_run_count_middleware']);
+    $action = new SimpleAction();
 
-        unset($_SERVER['_test_run_count_middleware']); // cleanup
-    }
+    $action->onQueue()->execute();
+})->throws(
+    InvalidConfiguration::class,
+    "The given job class `" . stdClass::class . "` does not extend `" . ActionJob::class . "`"
+);
 
-    /** @test */
-    public function the_action_job_class_can_be_changed()
-    {
-        Queue::fake();
+test('an action serializes and deserializes an eloquent model', function () {
+    $user = ModelSerializationUser::create([
+        'status' => 'unverified',
+    ]);
 
-        Config::set('queuableaction.job_class', CustomActionJob::class);
+    /** @var \Spatie\QueueableAction\Tests\TestClasses\EloquentModelAction $action */
+    $action = app(EloquentModelAction::class);
 
-        $action = new SimpleAction();
+    $actionJob = new ActionJob($action, [$user]);
 
-        $action->onQueue()->execute();
+    // simulate action job is push to the queue
+    $serialized = serialize($actionJob);
 
-        Queue::assertPushed(CustomActionJob::class);
-        Queue::assertNotPushed(ActionJob::class);
-    }
+    // model change after pushed to queue, but before handling
+    $user->update(['status' => 'verified']);
 
-    /** @test */
-    public function a_custom_job_class_must_extends_action_job()
-    {
-        Queue::fake();
+    // simulate action job is handled by a queue worker
+    $unSerialized = unserialize($serialized);
 
-        Config::set('queuableaction.job_class', stdClass::class);
+    // the model should be deserialized by pulling the latest instance from the database
+    $unSerializedModel = $unSerialized->parameters()[0];
 
-        $action = new SimpleAction();
+    expect($unSerializedModel)->toBeInstanceOf(ModelSerializationUser::class)
+        ->and($unSerializedModel->id)->toEqual($user->id)
+        ->and($unSerializedModel->status)->toEqual('verified');
+});
 
-        $this->expectException(InvalidConfiguration::class);
-        $this->expectExceptionMessage("The given job class `". stdClass::class ."` does not extend `".ActionJob::class."`");
+test('an action can have a backoff property', function () {
+    Queue::fake();
 
-        $action->onQueue()->execute();
-    }
+    $action = new BackoffPropertyAction();
 
-    /** @test */
-    public function an_action_serializes_and_deserializes_an_eloquent_model()
-    {
-        $user = ModelSerializationUser::create([
-            'status' => 'unverified',
-        ]);
+    $action->onQueue()->execute();
 
-        /** @var \Spatie\QueueableAction\Tests\TestClasses\EloquentModelAction $action */
-        $action = app(EloquentModelAction::class);
+    Queue::assertPushed(ActionJob::class, function (ActionJob $action) {
+        return $action->backoff() === 5;
+    });
+});
 
-        $actionJob = new ActionJob($action, [$user]);
+test('an action can have a backoff function', function () {
+    Queue::fake();
 
-        // simulate action job is push to the queue
-        $serialized = serialize($actionJob);
+    $action = new BackoffAction();
 
-        // model change after pushed to queue, but before handling
-        $user->update(['status' => 'verified']);
+    $action->onQueue()->execute();
 
-        // simulate action job is handled by a queue worker
-        $unSerialized = unserialize($serialized);
+    Queue::assertPushed(ActionJob::class, function ($action) {
+        return $action->backoff() === [5, 10, 15];
+    });
+});
 
-        // the model should be deserialized by pulling the latest instance from the database
-        $unSerializedModel = $unSerialized->parameters()[0];
-        $this->assertInstanceOf(ModelSerializationUser::class, $unSerializedModel);
-        $this->assertSame($user->id, $unSerializedModel->id);
-        $this->assertSame('verified', $unSerializedModel->status);
-    }
+test('an action can be batched', function () {
+    Bus::fake();
 
-    /** @test */
-    public function an_action_can_have_a_backoff_property(): void
-    {
-        Queue::fake();
+    Bus::batch([
+        new ActionJob(SimpleAction::class),
+        new ActionJob(SimpleAction::class),
+        new ActionJob(SimpleAction::class),
+    ])->dispatch();
 
-        $action = new BackoffPropertyAction();
-
-        $action->onQueue()->execute();
-
-        Queue::assertPushed(ActionJob::class, function (ActionJob $action) {
-            return $action->backoff() === 5;
-        });
-    }
-
-    /** @test */
-    public function an_action_can_have_a_backoff_function(): void
-    {
-        Queue::fake();
-
-        $action = new BackoffAction();
-
-        $action->onQueue()->execute();
-
-        Queue::assertPushed(ActionJob::class, function ($action) {
-            return $action->backoff() === [5, 10, 15];
-        });
-    }
-
-    /** @test */
-    public function an_action_can_be_batched()
-    {
-        Bus::fake();
-
-        Bus::batch([
-            new ActionJob(SimpleAction::class),
-            new ActionJob(SimpleAction::class),
-            new ActionJob(SimpleAction::class),
-        ])->dispatch();
-
-        Bus::assertBatched(function (PendingBatch $batch): bool {
-            return $batch->jobs->count() === 3
-                && $batch->jobs->first() instanceof ActionJob
-                && $batch->jobs->first()->displayName() === SimpleAction::class;
-        });
-    }
-}
+    Bus::assertBatched(function (PendingBatch $batch): bool {
+        return $batch->jobs->count() === 3
+            && $batch->jobs->first() instanceof ActionJob
+            && $batch->jobs->first()->displayName() === SimpleAction::class;
+    });
+});
