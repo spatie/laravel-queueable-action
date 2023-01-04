@@ -3,14 +3,14 @@
 use Illuminate\Support\Facades\Config;
 use Illuminate\Support\Facades\Queue;
 use PHPUnit\Framework\Assert;
+use function PHPUnit\Framework\assertStringContainsString;
 use PHPUnit\Framework\ExpectationFailedException;
 use Spatie\QueueableAction\ActionJob;
 use Spatie\QueueableAction\Testing\QueueableActionFake;
 use Spatie\QueueableAction\Tests\TestClasses\CustomActionJob;
 use Spatie\QueueableAction\Tests\TestClasses\QueueableActionFakeTestClass;
-use Spatie\QueueableAction\Tests\TestClasses\SimpleAction;
 
-use function PHPUnit\Framework\assertStringContainsString;
+use Spatie\QueueableAction\Tests\TestClasses\SimpleAction;
 
 it('can assert an action was pushed', function () {
     Queue::fake();
