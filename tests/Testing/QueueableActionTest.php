@@ -1,123 +1,105 @@
 <?php
 
-namespace Spatie\QueueableAction\Tests\Testing;
-
 use Illuminate\Support\Facades\Config;
 use Illuminate\Support\Facades\Queue;
 use PHPUnit\Framework\Assert;
+use function PHPUnit\Framework\assertStringContainsString;
 use PHPUnit\Framework\ExpectationFailedException;
 use Spatie\QueueableAction\ActionJob;
 use Spatie\QueueableAction\Testing\QueueableActionFake;
-use Spatie\QueueableAction\Tests\TestCase;
 use Spatie\QueueableAction\Tests\TestClasses\CustomActionJob;
 use Spatie\QueueableAction\Tests\TestClasses\QueueableActionFakeTestClass;
+
 use Spatie\QueueableAction\Tests\TestClasses\SimpleAction;
 
-class QueueableActionTest extends TestCase
-{
-    /** @test */
-    public function it_can_assert_an_action_was_pushed()
-    {
-        Queue::fake();
+it('can assert an action was pushed', function () {
+    Queue::fake();
 
-        $action = new SimpleAction();
+    $action = new SimpleAction();
 
-        $action->onQueue()->execute();
+    $action->onQueue()->execute();
 
-        QueueableActionFake::assertPushed(SimpleAction::class);
-    }
+    QueueableActionFake::assertPushed(SimpleAction::class);
+});
 
-    /** @test */
-    public function it_can_assert_an_action_was_pushed_times()
-    {
-        Queue::fake();
+it('can assert an action was pushed times', function () {
+    Queue::fake();
 
-        $action = new SimpleAction();
+    $action = new SimpleAction();
 
-        $action->onQueue()->execute();
-        $action->onQueue()->execute();
+    $action->onQueue()->execute();
+    $action->onQueue()->execute();
 
-        QueueableActionFake::assertPushedTimes(SimpleAction::class, 2);
-    }
+    QueueableActionFake::assertPushedTimes(SimpleAction::class, 2);
+});
 
-    /** @test */
-    public function it_can_assert_an_action_was_not_pushed()
-    {
-        Queue::fake();
+it('can assert an action was not pushed', function () {
+    Queue::fake();
 
+    QueueableActionFake::assertNotPushed(SimpleAction::class);
+});
+
+it('nags the queue is not fake', function () {
+    try {
         QueueableActionFake::assertNotPushed(SimpleAction::class);
+    } catch (ExpectationFailedException $exception) {
+        assertStringContainsString('Queue was not faked. Use `Queue::fake()`', $exception->toString());
+
+        return;
     }
 
-    /** @test */
-    public function it_nags_the_queue_is_not_fake()
-    {
-        try {
-            QueueableActionFake::assertNotPushed(SimpleAction::class);
-        } catch (ExpectationFailedException $exception) {
-            $this->assertStringContainsString('Queue was not faked. Use `Queue::fake()`', $exception->toString());
+    Assert::fail('QueueableAction did not complain about missing `Queue::fake()`.');
+});
 
-            return;
-        }
+it('can assert an action with chain was pushed', function () {
+    Queue::fake();
 
-        Assert::fail('QueueableAction did not complain about missing `Queue::fake()`.');
-    }
+    $action = new SimpleAction();
 
-    /** @test */
-    public function it_can_assert_an_action_with_chain_was_pushed()
-    {
-        Queue::fake();
+    $action->onQueue()
+        ->execute()
+        ->chain([
+            new ActionJob(SimpleAction::class),
+            new ActionJob(SimpleAction::class),
+        ]);
 
-        $action = new SimpleAction();
+    QueueableActionFake::assertPushedWithChain(SimpleAction::class, [SimpleAction::class, SimpleAction::class]);
+});
 
-        $action->onQueue()
-            ->execute()
-            ->chain([
-                new ActionJob(SimpleAction::class),
-                new ActionJob(SimpleAction::class),
-            ]);
+it('can assert an action without chain was pushed', function () {
+    Queue::fake();
 
-        QueueableActionFake::assertPushedWithChain(SimpleAction::class, [SimpleAction::class, SimpleAction::class]);
-    }
+    $action = new SimpleAction();
 
-    /** @test */
-    public function it_can_assert_an_action_without_chain_was_pushed()
-    {
-        Queue::fake();
+    $action->onQueue()->execute();
 
-        $action = new SimpleAction();
+    QueueableActionFake::assertPushedWithoutChain(SimpleAction::class);
+});
 
-        $action->onQueue()->execute();
+test('get pushed count can use custom action job class', function () {
+    Config::set('queuableaction.job_class', CustomActionJob::class);
+    Queue::fake();
 
-        QueueableActionFake::assertPushedWithoutChain(SimpleAction::class);
-    }
+    $action = new SimpleAction();
+    $action->onQueue()->execute();
 
-    /** @test */
-    public function get_pushed_count_can_use_custom_action_job_class()
-    {
-        Config::set('queuableaction.job_class', CustomActionJob::class);
-        Queue::fake();
+    expect(
+        QueueableActionFakeTestClass::getPushedCountTest(SimpleAction::class)
+    )->toEqual(1);
+});
 
-        $action = new SimpleAction();
-        $action->onQueue()->execute();
+test('get chained classes can use custom action job class', function () {
+    Config::set('queuableaction.job_class', CustomActionJob::class);
+    Queue::fake();
 
-        $this->assertEquals(1, QueueableActionFakeTestClass::getPushedCountTest(SimpleAction::class));
-    }
+    $action = new SimpleAction();
 
-    /** @test */
-    public function get_chained_classes_can_use_custom_action_job_class()
-    {
-        Config::set('queuableaction.job_class', CustomActionJob::class);
-        Queue::fake();
+    $action->onQueue()
+        ->execute()
+        ->chain([
+            new CustomActionJob(SimpleAction::class),
+            new CustomActionJob(SimpleAction::class),
+        ]);
 
-        $action = new SimpleAction();
-
-        $action->onQueue()
-            ->execute()
-            ->chain([
-                new CustomActionJob(SimpleAction::class),
-                new CustomActionJob(SimpleAction::class),
-            ]);
-
-        $this->assertCount(2, QueueableActionFakeTestClass::getChainedClassesTest());
-    }
-}
+    expect(QueueableActionFakeTestClass::getChainedClassesTest())->toHaveCount(2);
+});

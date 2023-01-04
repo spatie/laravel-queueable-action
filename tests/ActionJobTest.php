@@ -1,31 +1,22 @@
 <?php
 
-namespace Spatie\QueueableAction\Tests;
-
 use Spatie\QueueableAction\ActionJob;
 use Spatie\QueueableAction\Tests\TestClasses\ComplexAction;
 use Spatie\QueueableAction\Tests\TestClasses\DataObject;
 use Spatie\QueueableAction\Tests\TestClasses\SimpleAction;
 
-class ActionJobTest extends TestCase
-{
-    /** @test */
-    public function it_can_be_instantiated_from_the_action_class()
-    {
-        $actionJob = new ActionJob(SimpleAction::class);
+it('can be instantiated from the action class', function () {
+    $actionJob = new ActionJob(SimpleAction::class);
 
-        $this->assertInstanceOf(ActionJob::class, $actionJob);
-        $this->assertEquals(SimpleAction::class, $actionJob->displayName());
-    }
+    expect($actionJob)->toBeInstanceOf(ActionJob::class)
+        ->and($actionJob->displayName())->toEqual(SimpleAction::class);
+});
 
-    /** @test */
-    public function it_can_be_instantiated_from_an_action_instance()
-    {
-        $complexAction = app(ComplexAction::class);
+it('can be instantiated from an action instance', function () {
+    $complexAction = app(ComplexAction::class);
 
-        $actionJob = new ActionJob($complexAction, [new DataObject('foo')]);
+    $actionJob = new ActionJob($complexAction, [new DataObject('foo')]);
 
-        $this->assertInstanceOf(ActionJob::class, $actionJob);
-        $this->assertEquals(ComplexAction::class, $actionJob->displayName());
-    }
-}
+    expect($actionJob)->toBeInstanceOf(ActionJob::class)
+        ->and($actionJob->displayName())->toEqual(ComplexAction::class);
+});
