@@ -59,6 +59,15 @@ trait QueueableAction
         return $class;
     }
 
+    public function onQueueWhen(bool|callable $condition, ?string $queue = null)
+    {
+        if (is_callable($condition)) {
+            $condition = $condition();
+        }
+
+        return $condition ? $this->onQueue($queue) : $this;
+    }
+
     public function middleware(): array
     {
         return [];

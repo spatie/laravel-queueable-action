@@ -95,6 +95,52 @@ test('an action is executed immediately if not queued', function () {
     assertLogHas('foo bar');
 });
 
+test('an action can be queued when a condition is met', function () {
+    Queue::fake();
+
+    /** @var \Spatie\QueueableAction\Tests\TestClasses\ComplexAction $action */
+    $action = app(ComplexAction::class);
+
+    $action->onQueueWhen(true)->execute(new DataObject('foo'));
+
+    Queue::assertPushed(ActionJob::class);
+});
+
+test('an action can be executed when a condition is not met', function() {
+    Queue::fake();
+
+    /** @var \Spatie\QueueableAction\Tests\TestClasses\ComplexAction $action */
+    $action = app(ComplexAction::class);
+
+    $action->onQueueWhen(false)->execute(new DataObject('bar'));
+
+    Queue::assertNotPushed(ActionJob::class);
+
+    assertLogHas('bar bar');
+});
+
+test('an action can be queued on a specific queue when a condition is met', function () {
+    Queue::fake();
+
+    /** @var \Spatie\QueueableAction\Tests\TestClasses\ComplexAction $action */
+    $action = app(ComplexAction::class);
+
+    $action->onQueueWhen(true, 'other')->execute(new DataObject('foo'));
+
+    Queue::assertPushedOn('other', ActionJob::class);
+});
+
+test('an action can be queued when a callable condition is met', function () {
+    Queue::fake();
+
+    /** @var \Spatie\QueueableAction\Tests\TestClasses\ComplexAction $action */
+    $action = app(ComplexAction::class);
+
+    $action->onQueueWhen(fn () => true)->execute(new DataObject('foo'));
+
+    Queue::assertPushed(ActionJob::class);
+});
+
 test('an action can be queued with a chain of other actions jobs', function () {
     Queue::fake();
 
