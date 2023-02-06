@@ -2,6 +2,7 @@
 
 namespace Spatie\QueueableAction;
 
+use Illuminate\Contracts\Queue\ShouldBeUnique;
 use Spatie\QueueableAction\Exceptions\InvalidConfiguration;
 
 trait QueueableAction
@@ -47,6 +48,10 @@ trait QueueableAction
             protected function determineActionJobClass(): string
             {
                 $actionJobClass = config('queuableaction.job_class') ?? ActionJob::class;
+
+                if (is_a($this->action, ShouldBeUnique::class)) {
+                    $actionJobClass = config('queuableaction.unique_job_class') ?? UniqueActionJob::class;
+                }
 
                 if (! is_a($actionJobClass, ActionJob::class, true)) {
                     throw InvalidConfiguration::jobClassIsNotValid($actionJobClass);

@@ -49,6 +49,10 @@ class ActionJob implements ShouldQueue
             if (method_exists($action, 'failed')) {
                 $this->onFailCallback = [$action, 'failed'];
             }
+
+            if (method_exists($action, 'uniqueId')) {
+                $this->uniqueId = $action->uniqueId(...$parameters);
+            }
         }
 
         $this->resolveQueueableProperties($this->actionClass);
@@ -125,6 +129,7 @@ class ActionJob implements ShouldQueue
             'timeout',
             'maxExceptions',
             'retryUntil',
+            'uniqueFor',
         ];
 
         foreach ($queueableProperties as $queueableProperty) {
