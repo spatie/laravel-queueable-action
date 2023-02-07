@@ -33,6 +33,8 @@ class ActionJob implements ShouldQueue
 
     protected $backoff;
 
+    protected $uniqueId;
+    
     public function __construct($action, array $parameters = [])
     {
         $this->actionClass = is_string($action) ? $action : get_class($action);
@@ -130,6 +132,7 @@ class ActionJob implements ShouldQueue
             'maxExceptions',
             'retryUntil',
             'uniqueFor',
+            'uniqueVia',
         ];
 
         foreach ($queueableProperties as $queueableProperty) {
