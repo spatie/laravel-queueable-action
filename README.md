@@ -1,7 +1,7 @@
 # Queueable actions in Laravel
 
 [![Latest Version on Packagist](https://img.shields.io/packagist/v/spatie/laravel-queueable-action.svg?style=flat-square)](https://packagist.org/packages/spatie/laravel-queueable-action)
-![GitHub Workflow Status](https://img.shields.io/github/workflow/status/spatie/laravel-queueable-action/run-tests?label=tests)
+![GitHub Workflow Status](https://img.shields.io/github/actions/workflow/status/spatie/laravel-queueable-action/run-tests.yml?label=tests)
 ![Check & fix styling](https://github.com/spatie/laravel-queueable-action/workflows/Check%20&%20fix%20styling/badge.svg)
 [![Total Downloads](https://img.shields.io/packagist/dt/spatie/laravel-queueable-action.svg?style=flat-square)](https://packagist.org/packages/spatie/laravel-queueable-action)
 
