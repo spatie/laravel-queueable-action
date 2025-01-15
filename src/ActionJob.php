@@ -9,6 +9,7 @@ use Illuminate\Foundation\Bus\Dispatchable;
 use Illuminate\Queue\InteractsWithQueue;
 use Illuminate\Queue\SerializesModels;
 use Throwable;
+use DateTime;
 
 class ActionJob implements ShouldQueue
 {
@@ -33,6 +34,9 @@ class ActionJob implements ShouldQueue
 
     protected $backoff;
 
+    /** @var DateTime|null */
+    protected $retryUntil;
+
     public function __construct($action, array $parameters = [])
     {
         $this->actionClass = is_string($action) ? $action : get_class($action);
@@ -44,6 +48,10 @@ class ActionJob implements ShouldQueue
 
             if (method_exists($action, 'backoff')) {
                 $this->backoff = $action->backoff();
+            }
+
+            if (method_exists($action, 'retryUntil')) {
+                $this->retryUntil = $action->retryUntil();
             }
 
             if (method_exists($action, 'failed')) {
@@ -77,6 +85,11 @@ class ActionJob implements ShouldQueue
     public function backoff()
     {
         return $this->backoff;
+    }
+
+    public function retryUntil()
+    {
+        return $this->retryUntil;
     }
 
     public function failed(Throwable $exception)
