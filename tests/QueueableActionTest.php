@@ -11,7 +11,7 @@ use Illuminate\Support\Facades\Queue;
 use Illuminate\Support\Facades\Schema;
 use Spatie\QueueableAction\ActionJob;
 use Spatie\QueueableAction\Exceptions\InvalidConfiguration;
-use Spatie\QueueableAction\Tests\TestClasses\ActionReturningAction;
+use Spatie\QueueableAction\Tests\TestClasses\ActionReturningJob;
 use Spatie\QueueableAction\Tests\TestClasses\ActionWithFailedMethod;
 use Spatie\QueueableAction\Tests\TestClasses\BackoffAction;
 use Spatie\QueueableAction\Tests\TestClasses\BackoffPropertyAction;
@@ -51,7 +51,7 @@ test('an action can be queued', function () {
 });
 
 test('an action can be queued and receives job property', function () {
-    $action = new ActionReturningAction();
+    $action = new ActionReturningJob();
     $job = $action->onQueue()->execute();
     assertInstanceOf(\Illuminate\Foundation\Bus\PendingDispatch::class, $job);
 });

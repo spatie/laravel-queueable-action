@@ -7,7 +7,7 @@ use Spatie\QueueableAction\QueueableAction;
 /**
  * @property $job
  */
-class ActionReturningAction
+class ActionReturningJob
 {
     use QueueableAction;
 
