@@ -53,7 +53,7 @@ test('an action can be queued', function () {
 test('an action can be queued and receives job property', function () {
     $action = new ActionReturningJob();
     $job = $action->onQueue()->execute();
-    assertInstanceOf(\Illuminate\Foundation\Bus\PendingDispatch::class, $job);
+    expect($job)->toBeInstanceOf(\Illuminate\Foundation\Bus\PendingDispatch::class);
 });
 
 test('an action with dependencies and input can be executed on the queue', function () {
