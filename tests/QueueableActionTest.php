@@ -2,6 +2,7 @@
 
 namespace Spatie\QueueableAction\Tests;
 
+use DateTime;
 use Exception;
 use Illuminate\Bus\PendingBatch;
 use Illuminate\Database\Schema\Blueprint;
@@ -24,6 +25,7 @@ use Spatie\QueueableAction\Tests\TestClasses\FailingAction;
 use Spatie\QueueableAction\Tests\TestClasses\InvokeableAction;
 use Spatie\QueueableAction\Tests\TestClasses\MiddlewareAction;
 use Spatie\QueueableAction\Tests\TestClasses\ModelSerializationUser;
+use Spatie\QueueableAction\Tests\TestClasses\RetryUntilAction;
 use Spatie\QueueableAction\Tests\TestClasses\SimpleAction;
 use Spatie\QueueableAction\Tests\TestClasses\TaggedAction;
 use stdClass;
@@ -278,6 +280,18 @@ test('an action can have a backoff function', function () {
 
     Queue::assertPushed(ActionJob::class, function ($action) {
         return $action->backoff() === [5, 10, 15];
+    });
+});
+
+test('an action can have a retryUntil function', function () {
+    Queue::fake();
+    $until = DateTime::createFromFormat("Y-m-d H:m:s", "2000-01-01 00:00:00");
+    $action = new RetryUntilAction();
+
+    $action->onQueue()->execute();
+
+    Queue::assertPushed(ActionJob::class, function ($action) use ($until) {
+        return $action->retryUntil()->getTimestamp() === $until->getTimestamp();
     });
 });
 
