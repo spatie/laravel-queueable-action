@@ -3,7 +3,6 @@
 namespace Spatie\QueueableAction\Tests\TestClasses;
 
 use DateTime;
-use Exception;
 use Spatie\QueueableAction\QueueableAction;
 
 class RetryUntilAction
