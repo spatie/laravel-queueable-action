@@ -12,6 +12,7 @@ use Illuminate\Support\Facades\Queue;
 use Illuminate\Support\Facades\Schema;
 use Spatie\QueueableAction\ActionJob;
 use Spatie\QueueableAction\Exceptions\InvalidConfiguration;
+use Spatie\QueueableAction\Tests\TestClasses\ActionReturningJob;
 use Spatie\QueueableAction\Tests\TestClasses\ActionWithFailedMethod;
 use Spatie\QueueableAction\Tests\TestClasses\BackoffAction;
 use Spatie\QueueableAction\Tests\TestClasses\BackoffPropertyAction;
@@ -29,6 +30,8 @@ use Spatie\QueueableAction\Tests\TestClasses\RetryUntilAction;
 use Spatie\QueueableAction\Tests\TestClasses\SimpleAction;
 use Spatie\QueueableAction\Tests\TestClasses\TaggedAction;
 use stdClass;
+use function PHPUnit\Framework\assertInstanceOf;
+use function PHPUnit\Framework\assertTrue;
 
 beforeEach(function () {
     config()->set('database.default', 'testing');
@@ -47,6 +50,12 @@ test('an action can be queued', function () {
     $action->onQueue()->execute();
 
     Queue::assertPushed(ActionJob::class);
+});
+
+test('an action can be queued and receives job property', function () {
+    $action = new ActionReturningJob();
+    $job = $action->onQueue()->execute();
+    expect($job)->toBeInstanceOf(\Illuminate\Foundation\Bus\PendingDispatch::class);
 });
 
 test('an action with dependencies and input can be executed on the queue', function () {
