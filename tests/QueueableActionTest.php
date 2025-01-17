@@ -30,8 +30,6 @@ use Spatie\QueueableAction\Tests\TestClasses\RetryUntilAction;
 use Spatie\QueueableAction\Tests\TestClasses\SimpleAction;
 use Spatie\QueueableAction\Tests\TestClasses\TaggedAction;
 use stdClass;
-use function PHPUnit\Framework\assertInstanceOf;
-use function PHPUnit\Framework\assertTrue;
 
 beforeEach(function () {
     config()->set('database.default', 'testing');
