@@ -2,10 +2,13 @@
 
 namespace Spatie\QueueableAction;
 
+use Illuminate\Contracts\Queue\Job;
 use Spatie\QueueableAction\Exceptions\InvalidConfiguration;
 
 trait QueueableAction
 {
+    public ?Job $job;
+
     /**
      * @return static
      */
