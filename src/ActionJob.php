@@ -6,9 +6,13 @@ use DateTime;
 use Illuminate\Bus\Batchable;
 use Illuminate\Bus\Queueable;
 use Illuminate\Contracts\Queue\ShouldQueue;
+use Illuminate\Database\Eloquent\Model;
 use Illuminate\Foundation\Bus\Dispatchable;
 use Illuminate\Queue\InteractsWithQueue;
 use Illuminate\Queue\SerializesModels;
+use Illuminate\Support\Enumerable;
+use ReflectionClass;
+use Spatie\QueueableAction\Attributes\WithoutRelations;
 use Throwable;
 
 class ActionJob implements ShouldQueue
@@ -40,7 +44,7 @@ class ActionJob implements ShouldQueue
     public function __construct($action, array $parameters = [])
     {
         $this->actionClass = is_string($action) ? $action : get_class($action);
-        $this->parameters = $parameters;
+        $this->parameters = $this->resolveParameters($action, $parameters);
 
         if (is_object($action)) {
             $this->tags = $action->tags();
@@ -60,6 +64,50 @@ class ActionJob implements ShouldQueue
         }
 
         $this->resolveQueueableProperties($this->actionClass);
+    }
+
+    private function resolveParameters($action, array $parameters): array
+    {
+        if (!is_object($action) || !method_exists($action, 'queueMethod')) {
+            return $parameters;
+        }
+
+        $reflection = new ReflectionClass($this->actionClass);
+        $reflectionParameters = $reflection->getMethod($action->queueMethod())->getParameters();
+
+        foreach ($reflectionParameters as $key => $reflectionParameter) {
+            if (empty($parameters[$key])) {
+                continue;
+            }
+
+            if (empty($reflectionParameter->getAttributes(WithoutRelations::class))) {
+                continue;
+            }
+
+            $parameter = $parameters[$key];
+
+            if (is_array($parameter)) {
+                $parameters[$key] = array_map(
+                    fn (mixed $parameter) => $this->resolveWithoutRelationsParameter($parameter),
+                    $parameter
+                );
+                continue;
+            }
+
+            if ($parameter instanceof Enumerable) {
+                $parameters[$key] = $parameter
+                    ->map(fn (mixed $parameter) => $this->resolveWithoutRelationsParameter($parameter));
+                continue;
+            }
+
+            $parameters[$key] = $this->resolveWithoutRelationsParameter($parameter);
+        }
+        return $parameters;
+    }
+
+    private function resolveWithoutRelationsParameter(mixed $parameter): mixed
+    {
+        return $parameter instanceof Model ? $parameter->withoutRelations() : $parameter;
     }
 
     public function displayName(): string

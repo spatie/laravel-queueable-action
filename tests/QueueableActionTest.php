@@ -22,6 +22,7 @@ use Spatie\QueueableAction\Tests\TestClasses\CountRunsMiddleware;
 use Spatie\QueueableAction\Tests\TestClasses\CustomActionJob;
 use Spatie\QueueableAction\Tests\TestClasses\DataObject;
 use Spatie\QueueableAction\Tests\TestClasses\EloquentModelAction;
+use Spatie\QueueableAction\Tests\TestClasses\EloquentModelWithoutRelationsAction;
 use Spatie\QueueableAction\Tests\TestClasses\FailingAction;
 use Spatie\QueueableAction\Tests\TestClasses\InvokeableAction;
 use Spatie\QueueableAction\Tests\TestClasses\MiddlewareAction;
@@ -36,6 +37,7 @@ beforeEach(function () {
 
     Schema::create('users', function (Blueprint $table) {
         $table->increments('id');
+        $table->foreignId('parent_id')->nullable()->constrained('users')->nullOnDelete();
         $table->string('status');
     });
 });
@@ -199,7 +201,7 @@ test('an action can have job middleware', function () {
 test('middleware runs only once', function () {
     $_SERVER['_test_run_count_middleware'] = 0;
 
-    $action = new class extends SimpleAction {
+    $action = new class () extends SimpleAction {
         public function middleware(): array
         {
             return [new CountRunsMiddleware()];
@@ -239,13 +241,22 @@ test('a custom job class must extends action job', function () {
     "The given job class `" . stdClass::class . "` does not extend `" . ActionJob::class . "`"
 );
 
-test('an action serializes and deserializes an eloquent model', function () {
+test('an action serializes and deserializes an eloquent model', function (
+    string $actionClass,
+    bool   $expectRelationsSerialized
+) {
     $user = ModelSerializationUser::create([
+        'status' => 'unverified',
+    ]);
+    $user->children()->create([
         'status' => 'unverified',
     ]);
 
     /** @var \Spatie\QueueableAction\Tests\TestClasses\EloquentModelAction $action */
-    $action = app(EloquentModelAction::class);
+    $action = app($actionClass);
+
+    // make sure relation was loaded before passing to action
+    $user->load('children');
 
     $actionJob = new ActionJob($action, [$user]);
 
@@ -263,8 +274,13 @@ test('an action serializes and deserializes an eloquent model', function () {
 
     expect($unSerializedModel)->toBeInstanceOf(ModelSerializationUser::class)
         ->and($unSerializedModel->id)->toEqual($user->id)
-        ->and($unSerializedModel->status)->toEqual('verified');
-});
+        ->and($unSerializedModel->status)->toEqual('verified')
+        ->and($unSerializedModel->relationLoaded('children'))->toEqual($expectRelationsSerialized);
+})
+    ->with([
+        [EloquentModelAction::class, true],
+        [EloquentModelWithoutRelationsAction::class, false],
+    ]);
 
 test('an action can have a backoff property', function () {
     Queue::fake();
