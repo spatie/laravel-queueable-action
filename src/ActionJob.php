@@ -68,21 +68,21 @@ class ActionJob implements ShouldQueue
 
     private function resolveParameters($action, array $parameters): array
     {
-        if (!is_object($action) || !method_exists($action, 'queueMethod')) {
+        if (! is_object($action) || ! method_exists($action, 'queueMethod')) {
             return $parameters;
         }
 
         $reflection = new ReflectionClass($this->actionClass);
         $reflectionParameters = $reflection->getMethod($action->queueMethod())->getParameters();
 
-        $useClassWithoutRelations = !empty($reflection->getAttributes(WithoutRelations::class));
+        $useClassWithoutRelations = ! empty($reflection->getAttributes(WithoutRelations::class));
 
         foreach ($reflectionParameters as $key => $reflectionParameter) {
-            if (!$useClassWithoutRelations && empty($parameters[$key])) {
+            if (! $useClassWithoutRelations && empty($parameters[$key])) {
                 continue;
             }
 
-            if (!$useClassWithoutRelations && empty($reflectionParameter->getAttributes(WithoutRelations::class))) {
+            if (! $useClassWithoutRelations && empty($reflectionParameter->getAttributes(WithoutRelations::class))) {
                 continue;
             }
 
@@ -93,17 +93,20 @@ class ActionJob implements ShouldQueue
                     fn (mixed $parameter) => $this->resolveWithoutRelationsParameter($parameter),
                     $parameter
                 );
+
                 continue;
             }
 
             if ($parameter instanceof Enumerable) {
                 $parameters[$key] = $parameter
                     ->map(fn (mixed $parameter) => $this->resolveWithoutRelationsParameter($parameter));
+
                 continue;
             }
 
             $parameters[$key] = $this->resolveWithoutRelationsParameter($parameter);
         }
+
         return $parameters;
     }
 

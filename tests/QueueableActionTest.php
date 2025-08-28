@@ -244,7 +244,7 @@ test('a custom job class must extends action job', function () {
 
 test('an action serializes and deserializes an eloquent model', function (
     string $actionClass,
-    bool   $expectRelationsSerialized
+    bool $expectRelationsSerialized
 ) {
     $user = ModelSerializationUser::create([
         'status' => 'unverified',
