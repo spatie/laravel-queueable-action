@@ -290,13 +290,12 @@ test('an action serializes eloquent model respecting without relations attribute
 
     $actionJob = new ActionJob($action, [$user]);
 
-    // simulate action job is push to the queue
+    // simulate action job is pushed to the queue
     $serialized = serialize($actionJob);
 
-    // simulate action job is handled by a queue worker
+    // deserialize to assert which properties were loaded
     $unSerialized = unserialize($serialized);
 
-    // the model should be deserialized by pulling the latest instance from the database
     $unSerializedModel = $unSerialized->parameters()[0];
 
     expect($unSerializedModel)->toBeInstanceOf(ModelSerializationUser::class)
@@ -324,19 +323,18 @@ test(
 
         $action = app($actionClass);
 
-        // make sure relation was loaded before passing to action
+        // make sure relations were loaded before passing to action
         $user->load('children');
         $child->load('children');
 
         $actionJob = new ActionJob($action, [collect([$user, $child])]);
 
-        // simulate action job is push to the queue
+        // simulate action job is pushed to the queue
         $serialized = serialize($actionJob);
 
-        // simulate action job is handled by a queue worker
+        // deserialize to assert which properties were loaded
         $unSerialized = unserialize($serialized);
 
-        // the model should be deserialized by pulling the latest instance from the database
         $unSerializedModelCollection = $unSerialized->parameters()[0];
 
         expect($unSerializedModelCollection)->toBeInstanceOf(Collection::class)
