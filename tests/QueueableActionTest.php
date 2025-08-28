@@ -6,6 +6,7 @@ use DateTime;
 use Exception;
 use Illuminate\Bus\PendingBatch;
 use Illuminate\Database\Schema\Blueprint;
+use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\Bus;
 use Illuminate\Support\Facades\Config;
 use Illuminate\Support\Facades\Queue;
@@ -22,7 +23,9 @@ use Spatie\QueueableAction\Tests\TestClasses\CountRunsMiddleware;
 use Spatie\QueueableAction\Tests\TestClasses\CustomActionJob;
 use Spatie\QueueableAction\Tests\TestClasses\DataObject;
 use Spatie\QueueableAction\Tests\TestClasses\EloquentModelAction;
+use Spatie\QueueableAction\Tests\TestClasses\EloquentModelCollectionAction;
 use Spatie\QueueableAction\Tests\TestClasses\EloquentModelWithoutRelationsClassAction;
+use Spatie\QueueableAction\Tests\TestClasses\EloquentModelWithoutRelationsCollectionParameterAction;
 use Spatie\QueueableAction\Tests\TestClasses\EloquentModelWithoutRelationsParameterAction;
 use Spatie\QueueableAction\Tests\TestClasses\FailingAction;
 use Spatie\QueueableAction\Tests\TestClasses\InvokeableAction;
@@ -242,7 +245,34 @@ test('a custom job class must extends action job', function () {
     "The given job class `" . stdClass::class . "` does not extend `" . ActionJob::class . "`"
 );
 
-test('an action serializes and deserializes an eloquent model', function (
+test('an action serializes and deserializes an eloquent model', function () {
+    $user = ModelSerializationUser::create([
+        'status' => 'unverified',
+    ]);
+
+    /** @var \Spatie\QueueableAction\Tests\TestClasses\EloquentModelAction $action */
+    $action = app(EloquentModelAction::class);
+
+    $actionJob = new ActionJob($action, [$user]);
+
+    // simulate action job is push to the queue
+    $serialized = serialize($actionJob);
+
+    // model change after pushed to queue, but before handling
+    $user->update(['status' => 'verified']);
+
+    // simulate action job is handled by a queue worker
+    $unSerialized = unserialize($serialized);
+
+    // the model should be deserialized by pulling the latest instance from the database
+    $unSerializedModel = $unSerialized->parameters()[0];
+
+    expect($unSerializedModel)->toBeInstanceOf(ModelSerializationUser::class)
+        ->and($unSerializedModel->id)->toEqual($user->id)
+        ->and($unSerializedModel->status)->toEqual('verified');
+});
+
+test('an action serializes eloquent model respecting without relations attribute', function (
     string $actionClass,
     bool $expectRelationsSerialized
 ) {
@@ -264,9 +294,6 @@ test('an action serializes and deserializes an eloquent model', function (
     // simulate action job is push to the queue
     $serialized = serialize($actionJob);
 
-    // model change after pushed to queue, but before handling
-    $user->update(['status' => 'verified']);
-
     // simulate action job is handled by a queue worker
     $unSerialized = unserialize($serialized);
 
@@ -274,14 +301,54 @@ test('an action serializes and deserializes an eloquent model', function (
     $unSerializedModel = $unSerialized->parameters()[0];
 
     expect($unSerializedModel)->toBeInstanceOf(ModelSerializationUser::class)
-        ->and($unSerializedModel->id)->toEqual($user->id)
-        ->and($unSerializedModel->status)->toEqual('verified')
         ->and($unSerializedModel->relationLoaded('children'))->toEqual($expectRelationsSerialized);
 })
     ->with([
         [EloquentModelAction::class, true],
         [EloquentModelWithoutRelationsParameterAction::class, false],
         [EloquentModelWithoutRelationsClassAction::class, false],
+    ]);
+
+
+test(
+    'an action serializes an eloquent model collection respecting without relations attribute',
+    function (
+        string $actionClass,
+        bool $expectRelationsSerialized
+    ) {
+        $user = ModelSerializationUser::create([
+            'status' => 'unverified',
+        ]);
+        $child = $user->children()->create([
+            'status' => 'unverified',
+        ]);
+
+        /** @var \Spatie\QueueableAction\Tests\TestClasses\EloquentModelAction $action */
+        $action = app($actionClass);
+
+        // make sure relation was loaded before passing to action
+        $user->load('children');
+        $child->load('children');
+
+        $actionJob = new ActionJob($action, [collect([$user, $child])]);
+
+        // simulate action job is push to the queue
+        $serialized = serialize($actionJob);
+
+        // simulate action job is handled by a queue worker
+        $unSerialized = unserialize($serialized);
+
+        // the model should be deserialized by pulling the latest instance from the database
+        $unSerializedModelCollection = $unSerialized->parameters()[0];
+
+        expect($unSerializedModelCollection)->toBeInstanceOf(Collection::class)
+            ->and($unSerializedModelCollection[0]->relationLoaded('children'))->toEqual($expectRelationsSerialized)
+            ->and($unSerializedModelCollection[1]->relationLoaded('children'))->toEqual($expectRelationsSerialized);
+    }
+)
+    ->with([
+        [EloquentModelCollectionAction::class, true],
+        [EloquentModelWithoutRelationsCollectionParameterAction::class, false],
     ]);
 
 test('an action can have a backoff property', function () {
