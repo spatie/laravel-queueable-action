@@ -283,7 +283,6 @@ test('an action serializes eloquent model respecting without relations attribute
         'status' => 'unverified',
     ]);
 
-    /** @var \Spatie\QueueableAction\Tests\TestClasses\EloquentModelAction $action */
     $action = app($actionClass);
 
     // make sure relation was loaded before passing to action
@@ -323,7 +322,6 @@ test(
             'status' => 'unverified',
         ]);
 
-        /** @var \Spatie\QueueableAction\Tests\TestClasses\EloquentModelAction $action */
         $action = app($actionClass);
 
         // make sure relation was loaded before passing to action
