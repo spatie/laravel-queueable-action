@@ -15,7 +15,7 @@ trait QueueableAction
     public function onQueue(?string $queue = null)
     {
         /** @var self $class */
-        $class = new class ($this, $queue) {
+        $class = new class($this, $queue) {
             protected $action;
 
             protected $queue;

@@ -75,12 +75,14 @@ class ActionJob implements ShouldQueue
         $reflection = new ReflectionClass($this->actionClass);
         $reflectionParameters = $reflection->getMethod($action->queueMethod())->getParameters();
 
+        $useClassWithoutRelations = !empty($reflection->getAttributes(WithoutRelations::class));
+
         foreach ($reflectionParameters as $key => $reflectionParameter) {
-            if (empty($parameters[$key])) {
+            if (!$useClassWithoutRelations && empty($parameters[$key])) {
                 continue;
             }
 
-            if (empty($reflectionParameter->getAttributes(WithoutRelations::class))) {
+            if (!$useClassWithoutRelations && empty($reflectionParameter->getAttributes(WithoutRelations::class))) {
                 continue;
             }
 

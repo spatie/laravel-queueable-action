@@ -22,7 +22,8 @@ use Spatie\QueueableAction\Tests\TestClasses\CountRunsMiddleware;
 use Spatie\QueueableAction\Tests\TestClasses\CustomActionJob;
 use Spatie\QueueableAction\Tests\TestClasses\DataObject;
 use Spatie\QueueableAction\Tests\TestClasses\EloquentModelAction;
-use Spatie\QueueableAction\Tests\TestClasses\EloquentModelWithoutRelationsAction;
+use Spatie\QueueableAction\Tests\TestClasses\EloquentModelWithoutRelationsClassAction;
+use Spatie\QueueableAction\Tests\TestClasses\EloquentModelWithoutRelationsParameterAction;
 use Spatie\QueueableAction\Tests\TestClasses\FailingAction;
 use Spatie\QueueableAction\Tests\TestClasses\InvokeableAction;
 use Spatie\QueueableAction\Tests\TestClasses\MiddlewareAction;
@@ -201,7 +202,7 @@ test('an action can have job middleware', function () {
 test('middleware runs only once', function () {
     $_SERVER['_test_run_count_middleware'] = 0;
 
-    $action = new class () extends SimpleAction {
+    $action = new class extends SimpleAction {
         public function middleware(): array
         {
             return [new CountRunsMiddleware()];
@@ -279,7 +280,8 @@ test('an action serializes and deserializes an eloquent model', function (
 })
     ->with([
         [EloquentModelAction::class, true],
-        [EloquentModelWithoutRelationsAction::class, false],
+        [EloquentModelWithoutRelationsParameterAction::class, false],
+        [EloquentModelWithoutRelationsClassAction::class, false],
     ]);
 
 test('an action can have a backoff property', function () {
