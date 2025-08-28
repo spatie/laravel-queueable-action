@@ -42,7 +42,7 @@ beforeEach(function () {
     Schema::create('users', function (Blueprint $table) {
         $table->increments('id');
         $table->foreignId('parent_id')->nullable()->constrained('users')->nullOnDelete();
-        $table->string('status');
+        $table->string('status')->nullable();
     });
 });
 
@@ -276,12 +276,8 @@ test('an action serializes eloquent model respecting without relations attribute
     string $actionClass,
     bool $expectRelationsSerialized
 ) {
-    $user = ModelSerializationUser::create([
-        'status' => 'unverified',
-    ]);
-    $user->children()->create([
-        'status' => 'unverified',
-    ]);
+    $user = ModelSerializationUser::create([]);
+    $user->children()->create([]);
 
     $action = app($actionClass);
 
@@ -314,12 +310,8 @@ test(
         string $actionClass,
         bool $expectRelationsSerialized
     ) {
-        $user = ModelSerializationUser::create([
-            'status' => 'unverified',
-        ]);
-        $child = $user->children()->create([
-            'status' => 'unverified',
-        ]);
+        $user = ModelSerializationUser::create([]);
+        $child = $user->children()->create([]);
 
         $action = app($actionClass);
 
