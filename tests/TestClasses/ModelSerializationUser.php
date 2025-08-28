@@ -3,7 +3,6 @@
 namespace Spatie\QueueableAction\Tests\TestClasses;
 
 use Illuminate\Database\Eloquent\Model;
-use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 
 class ModelSerializationUser extends Model
@@ -11,15 +10,7 @@ class ModelSerializationUser extends Model
     public $table = 'users';
     public $guarded = [];
     public $timestamps = false;
-
-    /**
-     * @return BelongsTo<self, $this>
-     */
-    public function parent(): BelongsTo
-    {
-        return $this->belongsTo(self::class);
-    }
-
+    
     /**
      * @return HasMany<self, $this>
      */
