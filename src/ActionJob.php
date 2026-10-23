@@ -34,6 +34,15 @@ class ActionJob implements ShouldQueue
 
     protected $backoff;
 
+    /** @var int|null */
+    public $tries;
+
+    /** @var int|null */
+    public $timeout;
+
+    /** @var int|null */
+    public $maxExceptions;
+
     /** @var DateTime|null */
     protected $retryUntil;
 
