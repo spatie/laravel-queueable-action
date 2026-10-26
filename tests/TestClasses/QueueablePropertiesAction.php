@@ -2,20 +2,11 @@
 
 namespace Spatie\QueueableAction\Tests\TestClasses;
 
-use Spatie\QueueableAction\QueueableAction;
-
-class QueueablePropertiesAction
+class QueueablePropertiesAction extends FailingAction
 {
-    use QueueableAction;
-
     public $tries = 5;
 
     public $timeout = 120;
 
     public $maxExceptions = 2;
-
-    public function execute()
-    {
-        //
-    }
 }

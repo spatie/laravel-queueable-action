@@ -2,6 +2,7 @@
 
 namespace Spatie\QueueableAction;
 
+use AllowDynamicProperties;
 use DateTime;
 use Illuminate\Bus\Batchable;
 use Illuminate\Bus\Queueable;
@@ -11,6 +12,7 @@ use Illuminate\Queue\InteractsWithQueue;
 use Illuminate\Queue\SerializesModels;
 use Throwable;
 
+#[AllowDynamicProperties]
 class ActionJob implements ShouldQueue
 {
     use Dispatchable, InteractsWithQueue, Queueable, Batchable;
@@ -33,15 +35,6 @@ class ActionJob implements ShouldQueue
     protected $onFailCallback;
 
     protected $backoff;
-
-    /** @var int|null */
-    public $tries;
-
-    /** @var int|null */
-    public $timeout;
-
-    /** @var int|null */
-    public $maxExceptions;
 
     /** @var DateTime|null */
     protected $retryUntil;
